@@ -1,50 +1,85 @@
-import { Button } from '@mui/material';
-import React, { useEffect, useState } from 'react'
-import { BsFillPatchQuestionFill } from 'react-icons/bs';
+import { Button } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
+import { BsFillPatchQuestionFill } from "react-icons/bs";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const RegisterForm = () => {
-    const [months] = useState(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
-    const [formFields,setFormFields] = useState({
-        email:'',password:''
-    })
+  const [months] = useState([
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ]);
+  const [formFields, setFormFields] = useState({
+    email: "",
+    password: "",
+    f_name: "",
+    l_name: "",
+    gender: "",
+    date: "",
+    month: "",
+    year: "",
+    pronouns: "",
+  });
 
-    const [showEye,setShowEye] = useState(false)
-    const [showPass,setShowPass] = useState(false)
-    // destructure 
-    const {email,password} = formFields
+  const [showEye, setShowEye] = useState(false);
+  const [showPass, setShowPass] = useState(false);
+  const [custom, showCustom] = useState(false);
+  // destructure
+  const {
+    email,
+    password,
+    f_name,
+    l_name,
+    gender,
+    date,
+    month,
+    year,
+    pronouns,
+  } = formFields;
 
+  const handleChange = (e) => {
+    setFormFields({
+      ...formFields,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-    const handleChange = (e) => {
-        setFormFields({
-            ...formFields,
-            [e.target.name] : e.target.value
-        })
+  const generateYears = () => {
+    let years = [];
+    let startYear = 2025;
+    let endYear = 1905;
+    for (startYear; startYear >= endYear; startYear--) {
+      years.push(startYear);
     }
+    return years;
+  };
 
-
-    const generateYears = () => {
-        let years = []
-        let startYear = 2025
-        let endYear = 1905
-        for(startYear; startYear >= endYear; startYear--){
-            years.push(startYear)
-        }
-        return years
-
+  useEffect(() => {
+    if (password.length > 0) {
+      setShowEye(true);
+    } else {
+      setShowEye(false);
     }
+  }, [password]);
 
+  const [radio, setRadio] = useState("");
 
-
-    useEffect(()=>{
-        if(password.length > 0){
-            setShowEye(true)
-        }else{
-            setShowEye(false)
-        }
-    },[password])
-
+  useEffect(() => {
+    setFormFields((prevValue) => ({
+      ...prevValue,
+      gender: radio,
+    }));
+  }, [radio]);
 
   return (
     <>
@@ -54,16 +89,16 @@ const RegisterForm = () => {
         <hr className="border-0 h-[1px] bg-gray-300 w-full my-3" />
         <div className="grid mb-1 gap-2 grid-cols-1 md:grid-cols-2">
           <input
-            name="email"
-            value={email}
+            name="f_name"
+            value={f_name}
             onChange={handleChange}
             type="text"
             placeholder="First Name"
             className="w-full mt-3  p-3 outline-0 focus:border-blue-500 border border-gray-200 rounded-md"
           />
           <input
-            name="email"
-            value={email}
+            name="l_name"
+            value={l_name}
             onChange={handleChange}
             type="text"
             placeholder="Surname"
@@ -78,9 +113,10 @@ const RegisterForm = () => {
           Date of birth <BsFillPatchQuestionFill />
         </label>
 
-        <div className="grid gap-2   grid-cols-1   md:grid-cols-3">
+        <div className="grid gap-2   grid-cols-3">
           <select
             name="date"
+            value={date}
             id=""
             className="p-3 border-gray-300 outline-0 focus:border-blue-600 border rounded-md"
           >
@@ -93,7 +129,8 @@ const RegisterForm = () => {
             })}
           </select>
           <select
-            name="date"
+            name="month"
+            value={month}
             id=""
             className="p-3 border-gray-300 outline-0 focus:border-blue-600 border rounded-md"
           >
@@ -102,17 +139,112 @@ const RegisterForm = () => {
             })}
           </select>
           <select
-            name="date"
+            name="year"
+            value={year}
             id=""
             className="p-3 border-gray-300 outline-0 focus:border-blue-600 border rounded-md"
           >
-            {generateYears()?.map((item,index)=>{
-                return <option value={item} key={index}>
-                    {item}
+            {generateYears()?.map((item, index) => {
+              return (
+                <option value={item} key={index}>
+                  {item}
                 </option>
+              );
             })}
           </select>
         </div>
+
+        <label
+          htmlFor=""
+          className="text-gray-700 flex items-center gap-1 text-sm"
+        >
+          Gender <BsFillPatchQuestionFill />
+        </label>
+
+        <div className="grid gap-2 grid-cols-3">
+          <div
+            onClick={() => setRadio("female")}
+            className="flex rounded-md justify-between items-center border border-gray-300 p-3"
+          >
+            <label className="text-gray-700">Female</label>
+            <input
+              onChange={handleChange}
+              type="radio"
+              checked={radio == "female"}
+              name="gender"
+              value={"female"}
+              id=""
+            />
+          </div>
+          <div
+            onClick={() => setRadio("male")}
+            className="flex rounded-md justify-between items-center border border-gray-300 p-3"
+          >
+            <label className="text-gray-700">Male</label>
+            <input
+              onChange={handleChange}
+              type="radio"
+              checked={radio == "male"}
+              name="gender"
+              value={"male"}
+              id=""
+            />
+          </div>
+          <div
+            onClick={() => setRadio("custom")}
+            className="flex rounded-md justify-between items-center border border-gray-300 p-3"
+          >
+            <label className="text-gray-700">Custom</label>
+            <input
+              checked={radio == "custom"}
+              onChange={handleChange}
+              type="radio"
+              name="gender"
+              value={"custom"}
+              id=""
+            />
+          </div>
+        </div>
+
+        {radio == "custom" && (
+          <div className="custom">
+            <select
+              name="email"
+              value={email}
+              onChange={handleChange}
+              type="text"
+              placeholder="Email address or phone number"
+              className="w-full text-gray-500 mt-3  p-3 outline-0 focus:border-blue-500 border border-gray-200 rounded-md"
+            >
+              <option disabled selected>
+                Select your pronouns
+              </option>
+              {[
+                `She: "Wish her a happy birthday`,
+                `He: "Wish him a happy birthday"`,
+                `They: "Wish them a happy birthday"`,
+              ].map((item, index) => {
+                return <option value={item}>{item}</option>;
+              })}
+            </select>
+
+            <label
+              htmlFor=""
+              className="text-gray-700 flex items-center gap-1 text-sm"
+            >
+              Your pronoun is visible to everyone.{" "}
+            </label>
+
+            <input
+              name="email"
+              value={email}
+              onChange={handleChange}
+              type="text"
+              placeholder="Gender (opitonal)"
+              className="w-full   p-3 outline-0 focus:border-blue-500 border border-gray-200 rounded-md"
+            />
+          </div>
+        )}
 
         <input
           name="email"
@@ -184,6 +316,6 @@ const RegisterForm = () => {
       </form>
     </>
   );
-}
+};
 
-export default RegisterForm
+export default RegisterForm;
