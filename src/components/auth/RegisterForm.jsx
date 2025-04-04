@@ -1,12 +1,10 @@
 import { Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BsFillPatchQuestionFill } from "react-icons/bs";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
-import { PiWarningOctagonFill } from "react-icons/pi";
 import { Link } from "react-router-dom";
 
 const RegisterForm = () => {
-  const [error, setError] = useState("");
   const [months] = useState([
     "Jan",
     "Feb",
@@ -21,23 +19,33 @@ const RegisterForm = () => {
     "Nov",
     "Dec",
   ]);
-  const [myDate] = useState(new Date());
   const [formFields, setFormFields] = useState({
     email: "",
     password: "",
     f_name: "",
     l_name: "",
-    date: myDate.getDate(),
-    month: myDate.getMonth(),
-    year: myDate.getFullYear(),
     gender: "",
+    date: "",
+    month: "",
+    year: "",
+    pronouns: "",
   });
 
   const [showEye, setShowEye] = useState(false);
   const [showPass, setShowPass] = useState(false);
+  const [custom, showCustom] = useState(false);
   // destructure
-  const { email, password, f_name, l_name, date, month, year, gender } =
-    formFields;
+  const {
+    email,
+    password,
+    f_name,
+    l_name,
+    gender,
+    date,
+    month,
+    year,
+    pronouns,
+  } = formFields;
 
   const handleChange = (e) => {
     setFormFields({
@@ -64,75 +72,43 @@ const RegisterForm = () => {
     }
   }, [password]);
 
-  const handleBlur = (name) => {
-    if (name == "f_name" && !f_name) {
-      setError("f_name");
-    }
-    if (name == "l_name" && !l_name) {
-      setError("l_name");
-    }
-  };
+  const [radio, setRadio] = useState("");
+
+  useEffect(() => {
+    setFormFields((prevValue) => ({
+      ...prevValue,
+      gender: radio,
+    }));
+  }, [radio]);
 
   return (
     <>
-      <form className="p-3 shadow-xl rounded-sm text-gray-700 bg-white">
+      <form className="p-3 shadow-xl rounded-md bg-white">
         <h2 className="text-2xl text-center">Create a new account</h2>
         <p className="text-center text-gray-600">It's quick and easy.</p>
         <hr className="border-0 h-[1px] bg-gray-300 w-full my-3" />
         <div className="grid mb-1 gap-2 grid-cols-1 md:grid-cols-2">
-          <div className="relative">
-            <input
-              onBlur={() => handleBlur("f_name")}
-              name="f_name"
-              value={f_name}
-              onChange={handleChange}
-              type="text"
-              placeholder="First Name"
-              className={`w-full mt-3  p-2 outline-0  border  rounded-sm text-gray-700 
-                  ${
-                    error == "f_name" && !f_name
-                      ? "border-red-600"
-                      : "border-gray-300 focus:border-blue-500"
-                  } 
-                
-              `}
-            />
-            {error == "f_name" && !f_name && (
-              <PiWarningOctagonFill
-                size={20}
-                className="absolute -translate-y-[15%] text-red-600 top-1/2 right-3"
-              />
-            )}
-          </div>
-          <div className="relative">
-            <input
-              name="l_name"
-              value={l_name}
-              onBlur={() => handleBlur("l_name")}
-              onChange={handleChange}
-              type="text"
-              placeholder="Surname"
-              className={`w-full mt-3  p-2 outline-0  border  rounded-sm text-gray-700 
-               
-              ${
-                error == "l_name" && !l_name
-                  ? "border-red-600"
-                  : "border-gray-300 focus:border-blue-500"
-              } 
-             `}
-            />
-
-            {error == "l_name" && !l_name && (
-              <PiWarningOctagonFill
-                size={20}
-                className="absolute -translate-y-[15%] text-red-600 top-1/2 right-3"
-              />
-            )}
-          </div>
+          <input
+            name="f_name"
+            value={f_name}
+            onChange={handleChange}
+            type="text"
+            placeholder="First Name"
+            className="w-full mt-3  p-3 outline-0 focus:border-blue-500 border border-gray-200 rounded-md"
+          />
+          <input
+            name="l_name"
+            value={l_name}
+            onChange={handleChange}
+            type="text"
+            placeholder="Surname"
+            className="w-full mt-3  p-3 outline-0 focus:border-blue-500 border border-gray-200 rounded-md"
+          />
         </div>
+
         <label
           htmlFor=""
-          className="text-gray-700 my-2 flex items-center gap-1 text-sm"
+          className="text-gray-700 flex items-center gap-1 text-sm"
         >
           Date of birth <BsFillPatchQuestionFill />
         </label>
@@ -141,9 +117,8 @@ const RegisterForm = () => {
           <select
             name="date"
             value={date}
-            onChange={handleChange}
             id=""
-            className="p-2 border-gray-300 outline-0 focus:border-blue-600 border rounded-sm text-gray-700"
+            className="p-3 border-gray-300 outline-0 focus:border-blue-600 border rounded-md"
           >
             {Array.from({ length: 30 }).map((_, index) => {
               return (
@@ -156,20 +131,18 @@ const RegisterForm = () => {
           <select
             name="month"
             value={month}
-            onChange={handleChange}
             id=""
-            className="p-2 border-gray-300 outline-0 focus:border-blue-600 border rounded-sm text-gray-700"
+            className="p-3 border-gray-300 outline-0 focus:border-blue-600 border rounded-md"
           >
             {months?.map((item, index) => {
-              return <option value={index}>{item}</option>;
+              return <option value={item}>{item}</option>;
             })}
           </select>
           <select
             name="year"
             value={year}
-            onChange={handleChange}
             id=""
-            className="p-2 border-gray-300 outline-0 focus:border-blue-600 border rounded-sm text-gray-700"
+            className="p-3 border-gray-300 outline-0 focus:border-blue-600 border rounded-md"
           >
             {generateYears()?.map((item, index) => {
               return (
@@ -183,33 +156,95 @@ const RegisterForm = () => {
 
         <label
           htmlFor=""
-          className="text-gray-700 my-2 flex items-center gap-1 text-sm"
+          className="text-gray-700 flex items-center gap-1 text-sm"
         >
           Gender <BsFillPatchQuestionFill />
         </label>
 
-        <div className="grid gap-2   grid-cols-2">
-          <div className="flex justify-between items-center p-2 rounded-sm text-gray-700 border border-gray-300">
-            <label>Female</label>
+        <div className="grid gap-2 grid-cols-3">
+          <div
+            onClick={() => setRadio("female")}
+            className="flex rounded-md justify-between items-center border border-gray-300 p-3"
+          >
+            <label className="text-gray-700">Female</label>
             <input
-              name="gender"
-              value={"female"}
               onChange={handleChange}
               type="radio"
+              checked={radio == "female"}
+              name="gender"
+              value={"female"}
               id=""
             />
           </div>
-          <div className="flex justify-between items-center p-2 rounded-sm text-gray-700 border border-gray-300">
-            <label>Male</label>
+          <div
+            onClick={() => setRadio("male")}
+            className="flex rounded-md justify-between items-center border border-gray-300 p-3"
+          >
+            <label className="text-gray-700">Male</label>
             <input
-              name="gender"
-              value={"male"}
               onChange={handleChange}
               type="radio"
+              checked={radio == "male"}
+              name="gender"
+              value={"male"}
+              id=""
+            />
+          </div>
+          <div
+            onClick={() => setRadio("custom")}
+            className="flex rounded-md justify-between items-center border border-gray-300 p-3"
+          >
+            <label className="text-gray-700">Custom</label>
+            <input
+              checked={radio == "custom"}
+              onChange={handleChange}
+              type="radio"
+              name="gender"
+              value={"custom"}
               id=""
             />
           </div>
         </div>
+
+        {radio == "custom" && (
+          <div className="custom">
+            <select
+              name="email"
+              value={email}
+              onChange={handleChange}
+              type="text"
+              placeholder="Email address or phone number"
+              className="w-full text-gray-500 mt-3  p-3 outline-0 focus:border-blue-500 border border-gray-200 rounded-md"
+            >
+              <option disabled selected>
+                Select your pronouns
+              </option>
+              {[
+                `She: "Wish her a happy birthday`,
+                `He: "Wish him a happy birthday"`,
+                `They: "Wish them a happy birthday"`,
+              ].map((item, index) => {
+                return <option value={item}>{item}</option>;
+              })}
+            </select>
+
+            <label
+              htmlFor=""
+              className="text-gray-700 flex items-center gap-1 text-sm"
+            >
+              Your pronoun is visible to everyone.{" "}
+            </label>
+
+            <input
+              name="email"
+              value={email}
+              onChange={handleChange}
+              type="text"
+              placeholder="Gender (opitonal)"
+              className="w-full   p-3 outline-0 focus:border-blue-500 border border-gray-200 rounded-md"
+            />
+          </div>
+        )}
 
         <input
           name="email"
@@ -217,7 +252,7 @@ const RegisterForm = () => {
           onChange={handleChange}
           type="text"
           placeholder="Email address or phone number"
-          className="w-full mt-3  p-2 outline-0 focus:border-blue-500 border border-gray-300 rounded-sm text-gray-700"
+          className="w-full mt-3  p-3 outline-0 focus:border-blue-500 border border-gray-200 rounded-md"
         />
         <div className="relative">
           <input
@@ -226,7 +261,7 @@ const RegisterForm = () => {
             onChange={handleChange}
             type={showPass ? "text" : "password"}
             placeholder="Password"
-            className="w-full p-2 my-2 outline-0 focus:border-blue-500 border border-gray-300 rounded-sm text-gray-700"
+            className="w-full p-3 my-2 outline-0 focus:border-blue-500 border border-gray-200 rounded-md"
           />
 
           {showPass ? (
@@ -248,35 +283,35 @@ const RegisterForm = () => {
           {/* <FaEyeSlash onClick={()=>setShow(!show)} className={`absolute ${!show && 'hidden'} top-1/2 right-3 -translate-y-1/2 text-gray-800`} cursor={'pointer'} size={20} /> */}
         </div>
 
-        <p className="text-gray-500 text-[0.8rem] font-[500] my-3">
-          People who use our service may have uploaded your contact information
-          to Facebook. Learn more.
-        </p>
-        <p className="text-gray-500 text-[0.8rem] font-[500] my-3">
-          By clicking Sign Up, you agree to our Terms, Privacy Policy and
-          Cookies Policy. You may receive SMS notifications from us and can opt
-          out at any time.
-        </p>
-
         <Button
           variant="contained"
-          className="w-1/2 my-2 mx-auto"
-          style={{
-            padding: "8px",
-            margin: "auto",
-            display: "block",
-            fontWeight: "bold",
-            background: "#42B72A",
-          }}
+          className="w-full my-2"
+          style={{ padding: "12px", fontWeight: "bold" }}
         >
-          Sign Up
+          Log in
         </Button>
 
         <Link
           to={"/"}
-          className="text-blue-600 text-center block my-2 hover:underline"
+          className="text-blue-700 text-center block my-2 hover:underline"
         >
-          Already have an account?
+          Forgotten password ?
+        </Link>
+
+        <hr className="border-0 h-[1px] bg-gray-300" />
+        <Link className="text-white" to={"/register"}>
+          <Button
+            variant="contained"
+            style={{
+              padding: "12px",
+              background: "#42B72A",
+              margin: "1rem auto",
+              display: "block",
+            }}
+            className="my-2"
+          >
+            Create New Account
+          </Button>
         </Link>
       </form>
     </>
