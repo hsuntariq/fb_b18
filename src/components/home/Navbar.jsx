@@ -9,9 +9,11 @@ import {
 import { navbar_data } from "./data/navbarData";
 import { BsBellFill, BsFillGrid3X3GapFill, BsMessenger } from "react-icons/bs";
 import Menu from "./rightside/Menu";
+import AccountSettings from "./AccountSettings";
 
 const Navbar = () => {
   const [focused, setFocused] = useState(false);
+  const [openMenu, setOpenMenu] = useState(false);
 
   return (
     <>
@@ -76,11 +78,17 @@ const Navbar = () => {
         {/* right sidedata */}
         <div className="flex gap-3 px-5">
           {/* grid */}
-          <div className="relative">
-            <div className="h-[40px] rounded-full hover:bg-gray-300 cursor-pointer bg-gray-200 w-[40px] flex justify-center items-center">
-              <BsFillGrid3X3GapFill size={22} className="text-gray-800" />
+          <div onClick={() => setOpenMenu(!openMenu)} className="relative">
+            <div
+              className={`h-[40px] rounded-full ${
+                openMenu
+                  ? "text-[#0861F2] bg-[#DFE9F2] hover:bg-[#d2e5f4]"
+                  : "bg-gray-200 hover:bg-gray-300 text-gray-800"
+              }  cursor-pointer  w-[40px] flex justify-center items-center`}
+            >
+              <BsFillGrid3X3GapFill size={22} className="" />
             </div>
-            <Menu />
+            {openMenu && <Menu />}
           </div>
           {/* messenger */}
           <div className="h-[40px] rounded-full hover:bg-gray-300 cursor-pointer bg-gray-200 w-[40px] flex justify-center items-center">
@@ -102,6 +110,7 @@ const Navbar = () => {
             <div className="absolute delay-150 mt-1 group-hover:opacity-100 bg-black text-white rounded-xl px-3 py-1 shadow-xl transition-all duration-200 opacity-0  left-1/2 top-full -translate-x-1/2 text-sm">
               Account
             </div>
+            {/* <AccountSettings /> */}
           </div>
         </div>
       </nav>
