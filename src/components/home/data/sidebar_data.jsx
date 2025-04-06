@@ -1,167 +1,102 @@
 export const sidebar_data = [
   {
     id: 1,
-    title: "social",
-    list: [
-      {
-        id: 1,
-        image: "/menu_icons/event.png",
-        heading: "Events",
-        desc: "Organize or find events and other things to do online and nearby.",
-      },
-      {
-        id: 2,
-        image: "/menu_icons/friends.png",
-        heading: "Friends",
-        desc: "Search for friends or people you may know.",
-      },
-      {
-        id: 3,
-        image: "/menu_icons/groups.png",
-        heading: "Groups",
-        desc: "Connect with people who share your interests.",
-      },
-      {
-        id: 4,
-        image: "/menu_icons/news.png",
-        heading: "News Feed",
-        desc: "See relevant posts from people and Pages that you follow.",
-      },
-      {
-        id: 5,
-        image: "/menu_icons/feed.png",
-        heading: "Feeds",
-        desc: "See the most recent posts from your friends, groups, Pages, and more.",
-      },
-      {
-        id: 6,
-        image: "/menu_icons/pages.png",
-        heading: "Pages",
-        desc: "Discover and connect with businesses on Facebook.",
-      },
-    ],
+    icon: "/menu_icons/friends.png",
+    title: "Friends",
   },
   {
     id: 2,
-    title: "Entertainment",
-    list: [
-      {
-        id: 7,
-        image: "/menu_icons/gaming.png",
-        heading: "Gaming Video",
-        desc: "Watch and connect with your favourite games and streamers.",
-      },
-      {
-        id: 8,
-        image: "/menu_icons/play.png",
-        heading: "Play Games",
-        desc: "Play your favourite games.",
-      },
-      {
-        id: 9,
-        image: "/menu_icons/video.png",
-        heading: "Video",
-        desc: "A video destination personalised to your interests and connections.",
-      },
-    ],
+    icon: "/menu_icons/memories.png",
+    title: "Memories",
   },
-
   {
     id: 3,
-    title: "Shopping",
-    list: [
-      {
-        id: 10,
-        image: "/menu_icons/order.png",
-        heading: "Orders and Payments",
-        desc: "A seamless, secure way to pay in the apps you already use.",
-      },
-      {
-        id: 11,
-        image: "/menu_icons/marketplace.png",
-        heading: "Marketplace",
-        desc: "Buy and sell in your community.",
-      },
-    ],
+    icon: "/menu_icons/saved.png",
+    title: "Saved",
   },
   {
     id: 4,
-    title: "Personal",
-    list: [
-      {
-        id: 12,
-        image: "/menu_icons/recent.png",
-        heading: "Recent ad activity",
-        desc: "See all of the ads you've interacted with on Facebook.",
-      },
-      {
-        id: 13,
-        image: "/menu_icons/memories.png",
-        heading: "Memories",
-        desc: "Browse your old photos, videos and posts on Facebook.",
-      },
-      {
-        id: 14,
-        image: "/menu_icons/saved.png",
-        heading: "Saved",
-        desc: "Find posts, photos and videos that you've saved for later.",
-      },
-    ],
+    icon: "/menu_icons/groups.png",
+    title: "Groups",
   },
   {
     id: 5,
-    title: "Professional",
-    list: [
-      {
-        id: 15,
-        image: "/menu_icons/ads.png",
-        heading: "Ads Manager",
-        desc: "Create,manage and track the performance of your ads",
-      },
-    ],
+    icon: "/menu_icons/video.png",
+    title: "Video",
   },
-
   {
     id: 6,
-    title: "Community resources",
-    list: [
-      {
-        id: 17,
-        image: "/menu_icons/climate.png",
-        heading: "Climate Science Centre",
-        desc: "Learn about climate change and its effects.",
-      },
-      {
-        id: 18,
-        image: "/menu_icons/fundraisers.png",
-        heading: "Fundraisers",
-        desc: "Donate and raise money for charities and personal causes.",
-      },
-    ],
+    icon: "/menu_icons/marketplace.png",
+    title: "Marketplace",
   },
-
   {
     id: 7,
-    title: "More from Meta",
-    list: [
-      {
-        id: 19,
-        image: "/menu_icons/meta.png",
-        heading: "Meta AI",
-        desc: "Ask questions, brainstorm ideas, create any image you can imagine and more.",
-      },
-      {
-        id: 20,
-        image: "/menu_icons/kids.png",
-        heading: "Messenger Kids",
-        desc: "Let children message close friends and family.",
-      },
-      {
-        id: 21,
-        image: "/menu_icons/whatsapp.png",
-        heading: "WhatsApp",
-        desc: "Message and call people privately on your computer.",
-      },
-    ],
+    icon: "/menu_icons/feed.png",
+    title: "Feeds",
+  },
+  {
+    id: 8,
+    icon: "/menu_icons/event.png",
+    title: "Events",
+  },
+  {
+    id: 9,
+    icon: "/menu_icons/ads.png",
+    title: "Ads Manager",
+  },
+  {
+    id: 10,
+    icon: "/menu_icons/fundraisers.png",
+    title: "Fundraisers",
+  },
+  {
+    id: 11,
+    icon: "/menu_icons/birthday.png",
+    title: "Birthdays",
+  },
+  {
+    id: 12,
+    icon: "/menu_icons/climate.png",
+    title: "Climate Science Centre",
+  },
+  {
+    id: 13,
+    icon: "/menu_icons/gaming.png",
+    title: "Gaming video",
+  },
+  {
+    id: 14,
+    icon: "/menu_icons/messenger1.png",
+    title: "Messenger",
+  },
+  {
+    id: 15,
+    icon: "/menu_icons/kids.png",
+    title: "Messenger Kids",
+  },
+  {
+    id: 16,
+    icon: "/menu_icons/order.png",
+    title: "Orders and payments",
+  },
+  {
+    id: 17,
+    icon: "/menu_icons/pages.png",
+    title: "Pages",
+  },
+  {
+    id: 18,
+    icon: "/menu_icons/play.png",
+    title: "Play games",
+  },
+  {
+    id: 19,
+    icon: "/menu_icons/recent-ad.png",
+    title: "Recent ad activity",
+  },
+  {
+    id: 20,
+    icon: "/menu_icons/reels.png",
+    title: "Reels",
   },
 ];

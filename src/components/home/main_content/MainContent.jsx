@@ -1,7 +1,12 @@
 import React from "react";
+import AddPost from "./posts/AddPost";
 
 const MainContent = () => {
-  return <div>MainContent</div>;
+  return (
+    <>
+      <AddPost />
+    </>
+  );
 };
 
 export default MainContent;
