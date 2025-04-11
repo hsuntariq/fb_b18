@@ -15,7 +15,7 @@ const Home = () => {
           <Sidebar />
         </div>
         {/* main content */}
-        <div className="xl:col-span-6 lg:col-span-8  ">
+        <div className="xl:col-span-6 col-span-8 ">
           <MainContent />
         </div>
         {/* ads section */}

@@ -52,14 +52,14 @@ const Navbar = () => {
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
               type="text"
-              className="border-0 outline-0"
+              className="border-0 outline-0 md:hidden lg:block block"
               placeholder="Search Facebook"
             />
           </div>
         </div>
 
         {/* menu items */}
-        <ul className="flex gap-6 unstyled text-gray-600">
+        <ul className="md:flex xl:gap-6 lg:gap-3 m hidden unstyled text-gray-600">
           {navbar_data?.map((item, index) => {
             return (
               <li

@@ -41,11 +41,12 @@ export const colors = [
   },
   {
     id: 9,
-    image: "theme9.png", // if using background image or icon
+    image:
+      "https://static.vecteezy.com/system/resources/previews/002/058/290/non_2x/abstract-geometric-with-blue-background-free-vector.jpg", // if using background image or icon
   },
   {
     id: 10,
-    startColor: "#e3e3e3",
-    endColor: "#c1c1c1", // light gray
+    image:
+      "https://cdn0.iconfinder.com/data/icons/simplie-essential-action/22/067_block_dashboard_view_card-512.png",
   },
 ];

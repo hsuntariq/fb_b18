@@ -25,10 +25,27 @@ const style = {
 
 export default function BasicModal() {
   const [open, setOpen] = React.useState(false);
+  const [selectedColor, setSelectedColor] = React.useState({
+    startColor: "#fff",
+    endColor: "#fff",
+    image: "",
+  });
+
+  const [changed, setChanged] = React.useState(false);
+  const [caption, setCaption] = React.useState("");
+  const [show, setShow] = React.useState(true);
+  const { startColor, endColor } = selectedColor;
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    console.log("clicked");
+  };
 
   const [openColor, setOpenColor] = React.useState(false);
+
+  React.useEffect(() => {
+    caption.length > 0 ? setShow(false) : setShow(true);
+  }, [caption]);
 
   return (
     <>
@@ -52,8 +69,8 @@ export default function BasicModal() {
             <hr className="hr" />
 
             {/* user information */}
-            <div className="p-4">
-              <div className="flex items-center gap-2">
+            <div className="">
+              <div className="flex items-center gap-2 p-4">
                 <div className="flex items-center gap-3">
                   <div className="w-[45px] h-[45px] bg-gray-200 border-gray-300 rounded-full border flex justify-center items-center">
                     <FaUser size={25} className="text-gray-600" />
@@ -68,15 +85,43 @@ export default function BasicModal() {
                   </div>
                 </div>
               </div>
-              <textarea
+              <div
                 name=""
                 id=""
-                className="w-full text-[1.5rem] outline-0 my-3 post-caption"
-                placeholder="What's on your mind? Username"
-                rows={5}
-              ></textarea>
+                style={{
+                  background:
+                    startColor == ""
+                      ? `url(${selectedColor?.image})`
+                      : `linear-gradient(${startColor}, ${endColor})`,
+                  backgroundPosition: "center center",
+                  backgroundSize: "100% 100%",
+                }}
+                className={`w-full h-[200px] ${
+                  changed &&
+                  "h-[350px] text-white flex justify-center items-center placeholder-gray-400 font-extrabold"
+                } px-4 pb-4 text-black relative text-[1.5rem] transition-all duration-150 outline-0 my-3 post-caption`}
+                placeholder=""
+              >
+                <p className={`absolute ${show ? "block" : "hidden"}`}>
+                  What's on your mind? Username
+                </p>
+                <textarea
+                  value={caption}
+                  onChange={(e) => setCaption(e.target.value)}
+                  style={{
+                    resize: "none", // Disable manual resizing
+                    background: "transparent", // Match gradient background
+                    whiteSpace: "pre-wrap", // Allow text wrapping
+                    wordBreak: "break-word", // Break long words
+                  }}
+                  className={`${
+                    changed ? "" : ""
+                  } w-full outline-0 border-none bg-transparent`}
+                  placeholder=""
+                />
+              </div>
 
-              <div className="flex  justify-between items-center">
+              <div className="flex p-4 justify-between items-center">
                 {openColor ? (
                   <>
                     <div
@@ -101,8 +146,24 @@ export default function BasicModal() {
                       }}
                     >
                       {colors?.map((item, index) => {
+                        console.log(item);
                         return (
                           <motion.div
+                            onClick={() => {
+                              setSelectedColor(
+                                index == 8
+                                  ? {
+                                      startColor: "",
+                                      endColor: "",
+                                      image: item?.image,
+                                    }
+                                  : {
+                                      startColor: item?.startColor,
+                                      endColor: item?.endColor,
+                                    }
+                              );
+                              setChanged(index == 0 ? false : true);
+                            }}
                             key={index}
                             initial={{ scale: 0, rotate: 180 }}
                             animate={{ scale: 1, rotate: 0 }}
@@ -114,7 +175,12 @@ export default function BasicModal() {
                             }}
                             className="h-[32px] w-[32px] rounded-lg border border-gray-200 shadow-lg cursor-pointer"
                             style={{
-                              background: `linear-gradient(to right,${item?.startColor},${item?.endColor})`,
+                              background:
+                                index == 8 || index == 9
+                                  ? `url(${item?.image})`
+                                  : `linear-gradient(to right,${item?.startColor},${item?.endColor})`,
+                              backgroundSize: "100% 100%",
+                              backgroundPosition: "center center",
                             }}
                           ></motion.div>
                         );
