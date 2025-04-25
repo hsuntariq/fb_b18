@@ -4,6 +4,15 @@
   width: 0 !important;
 }
 
+.hide-arrows::-webkit-scrollbar {
+  width: 0;
+}
+
+.bg-image {
+  background-size: 100% 100% !important;
+  background-position: 100% 100% !important;
+}
+
 .hr {
   height: 1px !important;
   background-color: #e5e7eb !important;

@@ -10,7 +10,9 @@ import { GoSmiley } from "react-icons/go";
 import { IoChevronBackSharp } from "react-icons/io5";
 import { colors } from "./data/color-data";
 import { motion } from "framer-motion";
-
+import { IoIosArrowRoundBack } from "react-icons/io";
+import myData from "./data/decorative";
+import BackgroundThemes from "./BackgroundThemes";
 const style = {
   position: "absolute",
   top: "50%",
@@ -34,6 +36,7 @@ export default function BasicModal() {
   const [changed, setChanged] = React.useState(false);
   const [caption, setCaption] = React.useState("");
   const [show, setShow] = React.useState(true);
+  const [showBG, setShowBG] = React.useState(false);
   const { startColor, endColor } = selectedColor;
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -63,8 +66,14 @@ export default function BasicModal() {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <div className="flex h-screen justify-center items-center">
-          <div className="xl:w-[30%] md:w-[40%] rounded-md mx-auto bg-white shadow-md">
+        <div
+          onClick={handleClose}
+          className="flex  h-screen relative  justify-center items-center"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="xl:w-[30%] relative md:w-[40%] overflow-hidden rounded-md mx-auto bg-white shadow-md"
+          >
             <h4 className="text-center p-4 text-xl font-bold">Create post</h4>
             <hr className="hr" />
 
@@ -86,21 +95,20 @@ export default function BasicModal() {
                 </div>
               </div>
               <div
-                name=""
-                id=""
                 style={{
+                  backgroundPosition: "center center",
+                  backgroundRepeat: "no-repeat",
+                  backgroundSize: "cover", // Use cover instead of 100% 100%
                   background:
-                    startColor == ""
+                    startColor === ""
                       ? `url(${selectedColor?.image})`
                       : `linear-gradient(${startColor}, ${endColor})`,
-                  backgroundPosition: "center center",
-                  backgroundSize: "100% 100%",
                 }}
-                className={`w-full h-[200px] ${
-                  changed &&
-                  "h-[350px] text-white flex justify-center items-center placeholder-gray-400 font-extrabold"
+                className={`w-full ${
+                  changed
+                    ? "h-[350px] bg-image bg-no-repeat bg-cover text-white flex justify-center items-center placeholder-gray-400 font-extrabold"
+                    : "h-[200px]"
                 } px-4 pb-4 text-black relative text-[1.5rem] transition-all duration-150 outline-0 my-3 post-caption`}
-                placeholder=""
               >
                 <p className={`absolute ${show ? "block" : "hidden"}`}>
                   What's on your mind? Username
@@ -150,18 +158,20 @@ export default function BasicModal() {
                         return (
                           <motion.div
                             onClick={() => {
-                              setSelectedColor(
-                                index == 8
-                                  ? {
-                                      startColor: "",
-                                      endColor: "",
-                                      image: item?.image,
-                                    }
-                                  : {
-                                      startColor: item?.startColor,
-                                      endColor: item?.endColor,
-                                    }
-                              );
+                              index == 9
+                                ? setShowBG(true)
+                                : setSelectedColor(
+                                    index == 8
+                                      ? {
+                                          startColor: "",
+                                          endColor: "",
+                                          image: item?.image,
+                                        }
+                                      : {
+                                          startColor: item?.startColor,
+                                          endColor: item?.endColor,
+                                        }
+                                  );
                               setChanged(index == 0 ? false : true);
                             }}
                             key={index}
@@ -205,6 +215,14 @@ export default function BasicModal() {
                 />
               </div>
             </div>
+
+            {/* my_background */}
+
+            <BackgroundThemes
+              showBG={showBG}
+              setShowBG={setShowBG}
+              setSelectedColor={setSelectedColor}
+            />
           </div>
         </div>
       </Modal>

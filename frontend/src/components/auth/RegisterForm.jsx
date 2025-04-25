@@ -3,7 +3,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { BsFillPatchQuestionFill } from "react-icons/bs";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-
+import axios from "axios";
+import { ClockLoader } from "react-spinners";
+import { useDispatch, useSelector } from "react-redux";
+import { regUserSlice, userReset } from "../../features/users/userSlice";
+import toast from "react-hot-toast";
 const RegisterForm = () => {
   const [months] = useState([
     "Jan",
@@ -19,6 +23,8 @@ const RegisterForm = () => {
     "Nov",
     "Dec",
   ]);
+
+  const [loading, setLoading] = useState(false);
   const [formFields, setFormFields] = useState({
     email: "",
     password: "",
@@ -28,9 +34,9 @@ const RegisterForm = () => {
     date: "",
     month: "",
     year: "",
-    pronouns: "",
   });
 
+  const dispatch = useDispatch();
   const [showEye, setShowEye] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [custom, showCustom] = useState(false);
@@ -74,12 +80,38 @@ const RegisterForm = () => {
 
   const [radio, setRadio] = useState("");
 
+  const { user, userLoading, userError, userSuccess, userMessage } =
+    useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (userError) {
+      toast.error(userMessage);
+    }
+
+    dispatch(userReset());
+  }, [userError]);
+
   useEffect(() => {
     setFormFields((prevValue) => ({
       ...prevValue,
       gender: radio,
     }));
   }, [radio]);
+
+  const handleSignUp = async () => {
+    const userData = {
+      m_mail: email,
+      password,
+      f_name,
+      l_name,
+      gender,
+      date,
+      month,
+      year,
+      pronouns,
+    };
+    dispatch(regUserSlice(userData));
+  };
 
   return (
     <>
@@ -116,6 +148,7 @@ const RegisterForm = () => {
         <div className="grid gap-2   grid-cols-3">
           <select
             name="date"
+            onChange={handleChange}
             value={date}
             id=""
             className="p-3 border-gray-300 outline-0 focus:border-blue-600 border rounded-md"
@@ -131,6 +164,7 @@ const RegisterForm = () => {
           <select
             name="month"
             value={month}
+            onChange={handleChange}
             id=""
             className="p-3 border-gray-300 outline-0 focus:border-blue-600 border rounded-md"
           >
@@ -141,6 +175,7 @@ const RegisterForm = () => {
           <select
             name="year"
             value={year}
+            onChange={handleChange}
             id=""
             className="p-3 border-gray-300 outline-0 focus:border-blue-600 border rounded-md"
           >
@@ -199,8 +234,6 @@ const RegisterForm = () => {
               checked={radio == "custom"}
               onChange={handleChange}
               type="radio"
-              name="gender"
-              value={"custom"}
               id=""
             />
           </div>
@@ -209,8 +242,8 @@ const RegisterForm = () => {
         {radio == "custom" && (
           <div className="custom">
             <select
-              name="email"
-              value={email}
+              name="pronouns"
+              value={pronouns}
               onChange={handleChange}
               type="text"
               placeholder="Email address or phone number"
@@ -236,8 +269,8 @@ const RegisterForm = () => {
             </label>
 
             <input
-              name="email"
-              value={email}
+              name="gender"
+              value={gender}
               onChange={handleChange}
               type="text"
               placeholder="Gender (opitonal)"
@@ -284,11 +317,17 @@ const RegisterForm = () => {
         </div>
 
         <Button
+          disabled={loading}
           variant="contained"
-          className="w-full my-2"
-          style={{ padding: "12px", fontWeight: "bold" }}
+          onClick={handleSignUp}
+          className={`w-full my-2  `}
+          style={{
+            padding: "12px",
+            fontWeight: "bold",
+            background: loading && "#6a7282",
+          }}
         >
-          Log in
+          {loading ? <ClockLoader size={20} color="white" /> : "Sign Up"}
         </Button>
 
         <Link

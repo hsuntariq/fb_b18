@@ -4,10 +4,12 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Home from "./pages/home/Home";
+import { Toaster } from "react-hot-toast";
 const App = () => {
   return (
     <>
       <Router>
+        <Toaster />
         <Routes>
           {/* auth routes */}
           <Route path="/" element={<Login />} />
