@@ -2,7 +2,7 @@ import { Button } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { BsFillPatchQuestionFill } from "react-icons/bs";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ClockLoader } from "react-spinners";
 import { useDispatch, useSelector } from "react-redux";
@@ -83,13 +83,19 @@ const RegisterForm = () => {
   const { user, userLoading, userError, userSuccess, userMessage } =
     useSelector((state) => state.auth);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (userError) {
       toast.error(userMessage);
     }
 
+    if (userSuccess) {
+      navigate("/otp");
+    }
+
     dispatch(userReset());
-  }, [userError]);
+  }, [userError, userSuccess]);
 
   useEffect(() => {
     setFormFields((prevValue) => ({
@@ -317,17 +323,17 @@ const RegisterForm = () => {
         </div>
 
         <Button
-          disabled={loading}
+          disabled={userLoading}
           variant="contained"
           onClick={handleSignUp}
           className={`w-full my-2  `}
           style={{
             padding: "12px",
             fontWeight: "bold",
-            background: loading && "#6a7282",
+            background: userLoading && "#6a7282",
           }}
         >
-          {loading ? <ClockLoader size={20} color="white" /> : "Sign Up"}
+          {userLoading ? <ClockLoader size={20} color="white" /> : "Sign Up"}
         </Button>
 
         <Link

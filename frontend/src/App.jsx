@@ -5,6 +5,7 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Home from "./pages/home/Home";
 import { Toaster } from "react-hot-toast";
+import OtpVerificationPage from "./pages/auth/OTP";
 const App = () => {
   return (
     <>
@@ -14,7 +15,7 @@ const App = () => {
           {/* auth routes */}
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
-
+          <Route path="/otp" element={<OtpVerificationPage />} />
           {/* home routes */}
 
           <Route path="/home" element={<Home />} />

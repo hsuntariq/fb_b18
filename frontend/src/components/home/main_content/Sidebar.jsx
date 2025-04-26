@@ -3,6 +3,7 @@ import { FaUser } from "react-icons/fa";
 import { sidebar_data } from "../data/sidebar_data";
 import { IoIosArrowDown } from "react-icons/io";
 import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
 
 // Animation Variants
 const listVariants = {
@@ -20,6 +21,8 @@ const itemVariants = {
 };
 
 const Sidebar = () => {
+  const { user } = useSelector((state) => state.auth);
+
   const [open, setOpen] = useState(false);
 
   return (
@@ -30,7 +33,9 @@ const Sidebar = () => {
           <div className="w-[45px] h-[45px] bg-gray-200 border-gray-300 rounded-full border flex justify-center items-center">
             <FaUser size={25} className="text-gray-600" />
           </div>
-          <h4 className="text-md font-semibold">Username</h4>
+          <h4 className="text-md capitalize font-semibold">
+            {user?.f_name} {user?.l_name}
+          </h4>
         </div>
       </div>
 

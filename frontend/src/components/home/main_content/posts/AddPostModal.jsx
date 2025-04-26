@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import myData from "./data/decorative";
 import BackgroundThemes from "./BackgroundThemes";
+import { useSelector } from "react-redux";
 const style = {
   position: "absolute",
   top: "50%",
@@ -50,6 +51,8 @@ export default function BasicModal() {
     caption.length > 0 ? setShow(false) : setShow(true);
   }, [caption]);
 
+  const { user } = useSelector((state) => state.auth);
+
   return (
     <>
       <div
@@ -57,7 +60,8 @@ export default function BasicModal() {
         className="bg-gray-100 hover:bg-gray-200 cursor-pointer rounded-full w-full p-3"
       >
         <h4 className="text-md text-gray-500">
-          What's on your mind, Username?
+          What's on your mind,{" "}
+          <span className="capitalize">{user?.f_name}?</span>{" "}
         </h4>
       </div>
       <Modal
@@ -85,7 +89,9 @@ export default function BasicModal() {
                     <FaUser size={25} className="text-gray-600" />
                   </div>
                   <div className="flex flex-col">
-                    <h4 className="text-md font-semibold ">Username</h4>
+                    <h4 className="text-md font-semibold capitalize">
+                      {user?.f_name}
+                    </h4>
                     <div className="flex bg-gray-200 items-center px-1 rounded-sm gap-1">
                       <RiGroupFill size={10} />
                       <p className="text-sm font-semibold">Friends</p>
@@ -111,7 +117,8 @@ export default function BasicModal() {
                 } px-4 pb-4 text-black relative text-[1.5rem] transition-all duration-150 outline-0 my-3 post-caption`}
               >
                 <p className={`absolute ${show ? "block" : "hidden"}`}>
-                  What's on your mind? Username
+                  What's on your mind?{" "}
+                  <span className="capitalize">{user?.f_name}</span>
                 </p>
                 <textarea
                   value={caption}
