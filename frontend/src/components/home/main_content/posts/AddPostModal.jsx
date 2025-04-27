@@ -13,7 +13,8 @@ import { motion } from "framer-motion";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import myData from "./data/decorative";
 import BackgroundThemes from "./BackgroundThemes";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addPostData } from "../../../../features/posts/postSlice";
 const style = {
   position: "absolute",
   top: "50%",
@@ -52,6 +53,16 @@ export default function BasicModal() {
   }, [caption]);
 
   const { user } = useSelector((state) => state.auth);
+
+  const dispatch = useDispatch();
+  const handlePostUpload = () => {
+    // const postData = {
+    //   caption,
+    //   background:
+    // }
+
+    dispatch(addPostData());
+  };
 
   return (
     <>
@@ -230,6 +241,19 @@ export default function BasicModal() {
               setShowBG={setShowBG}
               setSelectedColor={setSelectedColor}
             />
+            <div className="p-4">
+              <Button
+                onClick={handlePostUpload}
+                disabled={show}
+                variant="contained"
+                style={{
+                  background: show ? "gray" : "",
+                }}
+                className="w-full my-2"
+              >
+                Add Post
+              </Button>
+            </div>
           </div>
         </div>
       </Modal>

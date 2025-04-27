@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { regUserService, verifyOTP } from "./userService";
+import { logUser, regUserService, verifyOTP } from "./userService";
 
 const initialState = {
   user: JSON.parse(localStorage.getItem("user")) || null,
@@ -14,6 +14,17 @@ export const regUserSlice = createAsyncThunk(
   async (userData, thunkAPI) => {
     try {
       return await regUserService(userData);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
+export const loginUser = createAsyncThunk(
+  "login-user",
+  async (userData, thunkAPI) => {
+    try {
+      return await logUser(userData);
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.error);
     }
@@ -58,6 +69,22 @@ export const authSlice = createSlice({
         state.userSuccess = true;
         state.user = action.payload;
       })
+
+      .addCase(loginUser.pending, (state, action) => {
+        state.userLoading = true;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.userLoading = false;
+        state.userError = true;
+        state.userMessage = action.payload;
+        state.user = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.userLoading = false;
+        state.userSuccess = true;
+        state.user = action.payload;
+      })
+
       .addCase(verifyUserOTP.pending, (state, action) => {
         state.userLoading = true;
       })

@@ -208,3 +208,29 @@ export const verifyOTP = asyncHandler(async (req, res) => {
     throw new Error("Invalid OTP");
   }
 });
+
+// login user
+
+export const loginUser = async (req, res) => {
+  const { m_mail, password } = req.body;
+
+  if (!m_mail || !password) {
+    res.status(400);
+    throw new Error("Please enter all the fields");
+  }
+
+  // check if the email is correct
+  const checkMail = await User.findOne({ m_mail });
+
+  if (!checkMail) {
+    res.status(404);
+    throw new Error("Invalid Email");
+  }
+
+  if (await bcrypt.compare(password, checkMail.password)) {
+    res.send(checkMail);
+  } else {
+    res.status(401);
+    throw new Error("Invalid Password");
+  }
+};
