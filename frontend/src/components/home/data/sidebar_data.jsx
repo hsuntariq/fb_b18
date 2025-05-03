@@ -58,6 +58,7 @@ export const sidebar_data = [
     id: 12,
     icon: "/menu_icons/climate.png",
     title: "Climate Science Centre",
+    link : "/climatecenter",
   },
   {
     id: 13,

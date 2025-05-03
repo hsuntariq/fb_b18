@@ -11,6 +11,7 @@ import { WiHumidity } from 'react-icons/wi'
 import { MdAir } from 'react-icons/md'
 import { TbTemperatureCelsius } from 'react-icons/tb'
 import { FcAbout, FcRight } from 'react-icons/fc'
+import Navbar from '../../components/home/Navbar'
 
 // Animation variants
 const containerVariants = {
@@ -111,7 +112,7 @@ const ClimateCenter = () => {
 
   return (
     <div className="w-full min-h-screen bg-[#F2F4F7] overflow-x-hidden">
-      <Nav />
+      <Navbar/>
 
       {/* Hero Section */}
       <motion.div
