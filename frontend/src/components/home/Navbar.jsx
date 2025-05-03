@@ -11,7 +11,7 @@ import { BsBellFill, BsFillGrid3X3GapFill, BsMessenger } from "react-icons/bs";
 import Menu from "./rightside/Menu";
 import AccountSettings from "./AccountSettings";
 import { Link } from "react-router-dom";
-import Messenger from "./Messenger";
+// import Messenger from "./Messenger";
 
 const Navbar = () => {
   const [focused, setFocused] = useState(false);
@@ -113,7 +113,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        <Messenger />
+        {/* <Messenger /> */}
       </nav>
     </>
   );

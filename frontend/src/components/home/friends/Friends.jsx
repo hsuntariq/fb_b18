@@ -14,10 +14,10 @@ const Friends = () => {
         <Navbar />
       </div>
 
-      {/* here we start another section */}
-      <div className="grid grid-cols-12">
+      {/* here we start another section  */}
+      <div className="grid grid-cols-12 ">
         {/* Sidebar - 3 columns */}
-        <div className="col-span-3 bg-white p-2 shadow-2xl sticky top-16 h-[91vh]">
+        <div className="col-span-3 bg-white p-2 shadow-2xl sticky top-16 h-[91vh] hidden sm:block">
           {/* friends */}
           <div className="flex items-center justify-between px-2">
             <h1 className="font-bold text-2xl">Friends</h1>
@@ -60,7 +60,7 @@ const Friends = () => {
         </div>
 
         {/* Main content - 9 columns */}
-        <div className="col-span-9 bg-gray-100 p-8">
+        <div className="col-span-12 sm:col-span-9 sm:bg-gray-100 sm:p-8 p-2">
           {/* Friends Request */}
           <div className="flex items-center justify-between">
             <p className="text-xl font-bold">Friends requests</p>
@@ -69,7 +69,7 @@ const Friends = () => {
             </p>
           </div>
           {/* Grid Friends */}
-          <div className="grid grid-cols-5 gap-4">
+          <div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
             <SingleFriend />
             <SingleFriend />
             <SingleFriend />
@@ -83,7 +83,7 @@ const Friends = () => {
               People you may know
             </p>
           </div>
-          <div className="grid grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             <PeopleKNow />
             <PeopleKNow />
             <PeopleKNow />
