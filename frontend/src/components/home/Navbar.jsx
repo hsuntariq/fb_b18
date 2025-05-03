@@ -10,6 +10,7 @@ import { navbar_data } from "./data/navbarData";
 import { BsBellFill, BsFillGrid3X3GapFill, BsMessenger } from "react-icons/bs";
 import Menu from "./rightside/Menu";
 import AccountSettings from "./AccountSettings";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [focused, setFocused] = useState(false);
@@ -57,24 +58,21 @@ const Navbar = () => {
             />
           </div>
         </div>
-
         {/* menu items */}
+        {/* import {Link} from "react-router-dom"; import {navbar_data} from
+        "../data/navbar_data"; */}
         <ul className="md:flex xl:gap-6 lg:gap-3 m hidden unstyled text-gray-600">
-          {navbar_data?.map((item, index) => {
-            return (
-              <li
-                key={index}
-                className="cursor-pointer group relative hover:bg-gray-100 px-10 py-2 rounded-md"
-              >
-                {item?.icon}
+          {navbar_data.map((item, index) => (
+            <Link to={item.link} key={index}>
+              <li className="cursor-pointer group relative hover:bg-gray-100 px-10 py-2 rounded-md">
+                {item.icon}
                 <div className="absolute delay-150 mt-1 group-hover:opacity-100 bg-black text-white rounded-xl px-3 py-1 shadow-xl transition-all duration-200 opacity-0  left-1/2 top-full -translate-x-1/2 text-sm">
-                  {item?.title}
+                  {item.title}
                 </div>
               </li>
-            );
-          })}
+            </Link>
+          ))}
         </ul>
-
         {/* right sidedata */}
         <div className="flex gap-3 px-5">
           {/* grid */}
