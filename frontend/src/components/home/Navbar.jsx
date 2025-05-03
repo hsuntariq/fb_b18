@@ -10,6 +10,7 @@ import { navbar_data } from "./data/navbarData";
 import { BsBellFill, BsFillGrid3X3GapFill, BsMessenger } from "react-icons/bs";
 import Menu from "./rightside/Menu";
 import AccountSettings from "./AccountSettings";
+import Messenger from "./Messenger";
 
 const Navbar = () => {
   const [focused, setFocused] = useState(false);
@@ -17,7 +18,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="flex  justify-between items-center">
+      <nav className="flex  justify-between items-center relative">
         <div
           className={`flex transition-all p-3 duration-300 items-center gap-2 ${
             focused && "shadow-2xl shadow-gray-400 p-3 rounded-md"
@@ -57,7 +58,6 @@ const Navbar = () => {
             />
           </div>
         </div>
-
         {/* menu items */}
         <ul className="md:flex xl:gap-6 lg:gap-3 m hidden unstyled text-gray-600">
           {navbar_data?.map((item, index) => {
@@ -74,7 +74,6 @@ const Navbar = () => {
             );
           })}
         </ul>
-
         {/* right sidedata */}
         <div className="flex gap-3 px-5">
           {/* grid */}
@@ -113,6 +112,8 @@ const Navbar = () => {
             {/* <AccountSettings /> */}
           </div>
         </div>
+
+        <Messenger />
       </nav>
     </>
   );
