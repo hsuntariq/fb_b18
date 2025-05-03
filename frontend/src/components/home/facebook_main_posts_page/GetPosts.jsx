@@ -4,7 +4,7 @@ import { GoDot, GoDotFill } from "react-icons/go";
 import { FiThumbsUp } from "react-icons/fi";
 import { PiShareFat } from "react-icons/pi";
 
-const GetPosts = () => {
+const GetPosts = ({ background, caption, _id, user_id }) => {
   return (
     <>
       <div className="shadow-lg xl:w-[70%] mx-auto lg:w-[80%] md:w-[90%] w-[95%] bg-white rounded-md my-2">
@@ -27,14 +27,30 @@ const GetPosts = () => {
             </div>
           </div>
         </div>
-        <p className="text-gray-900 p-3 my-2">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. At odio rem
-          corporis, officia ab, porro perferendis doloribus, libero corrupti
-          animi explicabo dolor! Reiciendis, voluptas? Consectetur atque illo
-          quas at? Quam!
-        </p>
+        {(background.startColor == "#ffffff" || background.image != "") && (
+          <p className="text-gray-900  p-3 my-2 capitalize ">{caption}</p>
+        )}
 
-        <div className="h-[400px] bg-green-500"></div>
+        <div
+          className={
+            background.startColor != "#ffffff" || background.image != ""
+              ? "h-[400px] relative"
+              : "h-0"
+          }
+          style={{
+            background: background.image
+              ? `url(${background?.image})`
+              : `linear-gradient(${background?.startColor},${background?.endColor})`,
+            backgroundSize: "contain",
+            backgroundPosition: "center center",
+          }}
+        >
+          {(background.startColor != "#ffffff" || background.image != "") && (
+            <p className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 my-2 text-white capitalize text-4xl">
+              {caption}
+            </p>
+          )}
+        </div>
         <div className="flex gap-2 p-3">
           <div className="flex"></div>
           <p className="text-gray-600 m-0">You and 14 others</p>

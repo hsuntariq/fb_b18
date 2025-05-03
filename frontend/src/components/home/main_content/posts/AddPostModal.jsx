@@ -146,7 +146,11 @@ export default function BasicModal() {
                     : "h-[200px]"
                 } px-4 pb-4 text-black relative text-[1.5rem] transition-all duration-150 outline-0 my-3 post-caption`}
               >
-                <p className={`absolute ${show ? "block" : "hidden"}`}>
+                <p
+                  className={`pointer-events-none absolute ${
+                    show ? "block" : "hidden"
+                  }`}
+                >
                   What's on your mind?{" "}
                   <span className="capitalize">{user?.f_name}</span>
                 </p>

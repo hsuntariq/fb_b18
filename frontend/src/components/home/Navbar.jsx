@@ -16,7 +16,7 @@ import Messenger from "./Messenger";
 const Navbar = () => {
   const [focused, setFocused] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
-
+  const [showMessenger, setShowMessenger] = useState(false);
   return (
     <>
       <nav className="flex  justify-between items-center relative">
@@ -90,7 +90,10 @@ const Navbar = () => {
             {openMenu && <Menu />}
           </div>
           {/* messenger */}
-          <div className="h-[40px] rounded-full hover:bg-gray-300 cursor-pointer bg-gray-200 w-[40px] flex justify-center items-center">
+          <div
+            onClick={() => setShowMessenger(!showMessenger)}
+            className="h-[40px] rounded-full hover:bg-gray-300 cursor-pointer bg-gray-200 w-[40px] flex justify-center items-center"
+          >
             <BsMessenger size={22} className="text-gray-800" />
           </div>
           {/* bell */}
@@ -112,8 +115,7 @@ const Navbar = () => {
             {/* <AccountSettings /> */}
           </div>
         </div>
-
-        <Messenger />
+        {showMessenger && <Messenger />}
       </nav>
     </>
   );
