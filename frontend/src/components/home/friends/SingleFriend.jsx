@@ -7,7 +7,7 @@ const SingleFriend = () => {
         <div className="flex gap-2  sm:flex-col items-center justify-content ">
           <img
             src="https://scontent.fisb13-1.fna.fbcdn.net/v/t39.30808-1/465969032_589120683457204_5501389201014455811_n.jpg?stp=dst-jpg_s240x240_tt6&_nc_cat=109&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeE6sWFZt_pXliXb0_XgNsPxAseeJY8o_AECx54ljyj8AThJHJ4SRLpxKRXLcccoTZ8OfUFFlpB-kNALuRg4ppDp&_nc_ohc=y9WEXEhk4ysQ7kNvwEycDrY&_nc_oc=Adk0bmdpgFt-y6HvGQdabu246ol39ATu8j4JGOb3WkuzzmxwGPMkT6KbONpo-jpOoN663QCOYKO4esSQm4MR8-lA&_nc_zt=24&_nc_ht=scontent.fisb13-1.fna&_nc_gid=hlkRzEHjd2oVfwh3Jnoefg&oh=00_AfFfD6dM3JkgiI4j-OQRIzj2iip0z7CC7jz6nhhLU7g7aA&oe=681AEA42"
-            className="sm:h-[200px] h-[90px] rounded-full sm:w-[100%] bg-amber-200"
+            className="sm:h-[200px] h-[90px] rounded-full sm:rounded-t-2xl sm:rounded-b-none  sm:w-[100%] bg-amber-200"
             alt=""
           />
           <div className="flex flex-col items gap-1">

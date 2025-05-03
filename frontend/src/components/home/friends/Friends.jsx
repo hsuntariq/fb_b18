@@ -28,7 +28,7 @@ const Friends = () => {
 
           {/* HOME */}
 
-          <div className="flex items-center gap-2 p-2 bg-gray-100 rounded-md my-2 cursor-pointer">
+          <div className="flex items-center gap-2 p-2 bg-blue-50 rounded-md my-2 cursor-pointer">
             <div className=" h-[40px] w-[40px] bg-[#1877F2] rounded-full flex items-center justify-center">
               <HiMiniUsers size={25} color="white" />
             </div>
