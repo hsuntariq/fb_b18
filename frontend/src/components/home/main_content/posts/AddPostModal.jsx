@@ -14,7 +14,9 @@ import { IoIosArrowRoundBack } from "react-icons/io";
 import myData from "./data/decorative";
 import BackgroundThemes from "./BackgroundThemes";
 import { useDispatch, useSelector } from "react-redux";
-import { addPostData } from "../../../../features/posts/postSlice";
+import { addPostData, postReset } from "../../../../features/posts/postSlice";
+import { ClockLoader, ScaleLoader } from "react-spinners";
+import toast from "react-hot-toast";
 const style = {
   position: "absolute",
   top: "50%",
@@ -53,16 +55,33 @@ export default function BasicModal() {
   }, [caption]);
 
   const { user } = useSelector((state) => state.auth);
-
+  const { posts, postLoading, postError, postSuccess, postMessage } =
+    useSelector((state) => state.album);
   const dispatch = useDispatch();
   const handlePostUpload = () => {
-    // const postData = {
-    //   caption,
-    //   background:
-    // }
+    const postData = {
+      caption,
+      background: selectedColor,
+      user_id: user?._id,
+    };
 
-    dispatch(addPostData());
+    dispatch(addPostData(postData));
   };
+
+  React.useEffect(() => {
+    if (postError) {
+      toast.error(postMessage);
+    }
+
+    if (postSuccess) {
+      toast.success("Posted Successfully!");
+      setCaption("");
+      setOpenColor(false);
+      setOpen(false);
+    }
+
+    dispatch(postReset());
+  }, [postError, postSuccess]);
 
   return (
     <>
@@ -244,14 +263,18 @@ export default function BasicModal() {
             <div className="p-4">
               <Button
                 onClick={handlePostUpload}
-                disabled={show}
+                disabled={show || postLoading}
                 variant="contained"
                 style={{
-                  background: show ? "gray" : "",
+                  background: show ? "#99a1af" : "",
                 }}
-                className="w-full my-2"
+                className="w-full  my-2"
               >
-                Add Post
+                {postLoading ? (
+                  <ClockLoader size={25} color={"white"} />
+                ) : (
+                  "Add Post"
+                )}
               </Button>
             </div>
           </div>
