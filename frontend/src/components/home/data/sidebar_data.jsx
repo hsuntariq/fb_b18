@@ -42,7 +42,7 @@ export const sidebar_data = [
   {
     id: 9,
     icon: "/menu_icons/ads.png",
-    title: "Ads Manager",
+    title: "Ads Managere",
   },
   {
     id: 10,
