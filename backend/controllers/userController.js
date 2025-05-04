@@ -15,8 +15,8 @@ const sendOTP = (m_mail, newUser) => {
   const transport = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "hsuntariq@gmail.com",
-      pass: "vmjphkjfrmuckvvj",
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS,
     },
   });
 

@@ -4,6 +4,7 @@ import { sidebar_data } from "../data/sidebar_data";
 import { IoIosArrowDown } from "react-icons/io";
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 // Animation Variants
 const listVariants = {
@@ -49,14 +50,18 @@ const Sidebar = () => {
         {sidebar_data
           ?.slice(0, open ? sidebar_data?.length : 10)
           ?.map((item, index) => (
+            <Link to={item?.link} key={index}>
             <motion.li
-              key={index}
+             
               variants={itemVariants}
               className="flex items-center hover:bg-gray-200 rounded-sm cursor-pointer p-1 gap-3  font-semibold"
             >
               <img src={item?.icon} alt="sidebar icon" width={40} />
               {item?.title}
             </motion.li>
+            
+            
+            </Link>
           ))}
 
         {/* Dropdown Item */}

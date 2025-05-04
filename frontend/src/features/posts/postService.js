@@ -9,3 +9,8 @@ export const addPost = async (postData) => {
 
   return response.data;
 };
+
+export const getAllPosts = async () => {
+  const response = await axios.get(`${base_url}/get-all-posts`);
+  return response.data;
+};

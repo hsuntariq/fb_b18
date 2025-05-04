@@ -9,6 +9,7 @@ import { Toaster } from "react-hot-toast";
 import OtpVerificationPage from "./pages/auth/OTP";
 import Friends from "./components/home/friends/Friends";
 import Feeds from "./components/home/Feeds/Feeds";
+import ClimateCenter from "./pages/home/ClimateCenter";
 const App = () => {
   return (
     <>
@@ -24,6 +25,7 @@ const App = () => {
           <Route path="/home" element={<Home />} />
           <Route path="/friends" element={<Friends />} />
           <Route path="/feeds" element={<Feeds />}></Route>
+          <Route path="/climatecenter" element={<ClimateCenter />} />
         </Routes>
       </Router>
     </>
