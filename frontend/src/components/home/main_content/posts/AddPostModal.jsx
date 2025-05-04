@@ -1,9 +1,16 @@
-import * as React from "react";
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { FaSortAlphaDown, FaSortDown, FaUser } from "react-icons/fa";
+import {
+  FaGift,
+  FaImages,
+  FaSortAlphaDown,
+  FaSortDown,
+  FaTimes,
+  FaUser,
+} from "react-icons/fa";
 import { Fa42Group } from "react-icons/fa6";
 import { RiGroupFill } from "react-icons/ri";
 import { GoSmiley } from "react-icons/go";
@@ -16,7 +23,17 @@ import BackgroundThemes from "./BackgroundThemes";
 import { useDispatch, useSelector } from "react-redux";
 import { addPostData, postReset } from "../../../../features/posts/postSlice";
 import { ClockLoader, ScaleLoader } from "react-spinners";
+
 import toast from "react-hot-toast";
+import {
+  FaImage,
+  FaUserTag,
+  FaSmile,
+  FaMapMarkerAlt,
+  FaEllipsisH,
+} from "react-icons/fa";
+import axios from "axios";
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -30,29 +47,36 @@ const style = {
 };
 
 export default function BasicModal() {
-  const [open, setOpen] = React.useState(false);
-  const [selectedColor, setSelectedColor] = React.useState({
+  const [open, setOpen] = useState(false);
+  const [selectedColor, setSelectedColor] = useState({
     startColor: "#fff",
     endColor: "#fff",
     image: "",
   });
 
-  const [changed, setChanged] = React.useState(false);
-  const [caption, setCaption] = React.useState("");
-  const [show, setShow] = React.useState(true);
-  const [showBG, setShowBG] = React.useState(false);
+  const [media, setMedia] = useState(false);
+  const [mediaSelected, setMediaSelected] = useState(false);
+  const [changed, setChanged] = useState(false);
+  const [caption, setCaption] = useState("");
+  const [show, setShow] = useState(true);
+  const [showBG, setShowBG] = useState(false);
   const { startColor, endColor } = selectedColor;
+  const [imagePreview, setImagePreview] = useState(null);
+  const [image, setImage] = useState(null);
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
     console.log("clicked");
   };
 
-  const [openColor, setOpenColor] = React.useState(false);
+  const [openColor, setOpenColor] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     caption.length > 0 ? setShow(false) : setShow(true);
-  }, [caption]);
+    if (mediaSelected) {
+      setShow(false);
+    }
+  }, [caption, mediaSelected]);
 
   const { user } = useSelector((state) => state.auth);
   const { posts, postLoading, postError, postSuccess, postMessage } =
@@ -65,10 +89,11 @@ export default function BasicModal() {
       user_id: user?._id,
     };
 
-    dispatch(addPostData(postData));
+    // dispatch(addPostData(postData));
+    uploadImage();
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (postError) {
       toast.error(postMessage);
     }
@@ -82,6 +107,30 @@ export default function BasicModal() {
 
     dispatch(postReset());
   }, [postError, postSuccess]);
+
+  const handleImageChange = (e) => {
+    let files = e.target.files[0];
+    let image_url = URL.createObjectURL(files);
+    setImagePreview(image_url);
+    setImage(files);
+    setMediaSelected(true);
+  };
+
+  const uploadImage = async () => {
+    // username : dwtsjgcyf
+    // password : ls8frk5v
+
+    const data = new FormData();
+    data.append("file", image);
+    data.append("upload_preset", "ls8frk5v");
+
+    const response = await axios.post(
+      "https://api.cloudinary.com/v1_1/dwtsjgcyf/image/upload",
+      data
+    );
+
+    console.log(response.data.url);
+  };
 
   return (
     <>
@@ -143,13 +192,17 @@ export default function BasicModal() {
                 className={`w-full ${
                   changed
                     ? "h-[350px] bg-image bg-no-repeat bg-cover text-white flex justify-center items-center placeholder-gray-400 font-extrabold"
+                    : media
+                    ? "h-[30px]"
                     : "h-[200px]"
                 } px-4 pb-4 text-black relative text-[1.5rem] transition-all duration-150 outline-0 my-3 post-caption`}
               >
                 <p
-                  className={`pointer-events-none absolute ${
+                  className={`pointer-events-none text-gray-600 absolute ${
                     show ? "block" : "hidden"
-                  }`}
+                  }
+                    ${media ? "text-[15px]" : ""}
+                  `}
                 >
                   What's on your mind?{" "}
                   <span className="capitalize">{user?.f_name}</span>
@@ -168,6 +221,73 @@ export default function BasicModal() {
                   } w-full outline-0 border-none bg-transparent`}
                   placeholder=""
                 />
+              </div>
+              {media && (
+                <div className="p-4">
+                  <input
+                    onChange={handleImageChange}
+                    type="file"
+                    className="hidden"
+                    name="image"
+                    id="media"
+                  />
+                  <label for="media">
+                    <div className="p-2 h-[350px] rounded-xl outline-1 outline-gray-300">
+                      <div className="relative h-full w-full max-w-xl bg-gray-100 rounded-md   border-0 p-1 flex flex-col hover:bg-gray-200 cursor-pointer   items-center justify-center text-center">
+                        {/* Close button */}
+                        <button
+                          onClick={() => {
+                            setMedia(false);
+                            setImagePreview(null);
+                            setMediaSelected(false);
+                          }}
+                          className="absolute top-3 right-3 bg-white border border-gray-300 rounded-full p-2 hover:bg-gray-200"
+                        >
+                          <FaTimes className="text-gray-600 text-sm" />
+                        </button>
+                        {mediaSelected ? (
+                          <div className=" overflow-y-scroll hide-scrollbar">
+                            <img src={imagePreview} width={"100%"} alt="" />
+                          </div>
+                        ) : (
+                          <>
+                            {/* Icon */}
+                            <div className="bg-gray-200 p-4 rounded-full mb-4">
+                              <FaImages className="text-gray-700 text-2xl" />
+                            </div>
+
+                            {/* Text */}
+                            <p className="font-medium text-black text-lg">
+                              Add photos/videos
+                            </p>
+                            <p className="text-gray-500 text-sm">
+                              or drag and drop
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              )}
+
+              <div className="px-5">
+                <div className="flex items-center  justify-between border border-gray-300 rounded-lg px-4 py-4 bg-white w-full max-w-xl">
+                  <span className="text-black font-medium">
+                    Add to your post
+                  </span>
+                  <div className="flex items-center space-x-4">
+                    <FaImage
+                      onClick={() => setMedia(true)}
+                      className="text-green-500 text-xl cursor-pointer"
+                    />
+                    <FaUserTag className="text-blue-500 text-xl cursor-pointer" />
+                    <FaSmile className="text-yellow-500 text-xl cursor-pointer" />
+                    <FaMapMarkerAlt className="text-red-500 text-xl cursor-pointer" />
+                    <FaGift className="text-teal-500 text-xl cursor-pointer" />
+                    <FaEllipsisH className="text-gray-600 text-xl cursor-pointer" />
+                  </div>
+                </div>
               </div>
 
               <div className="flex p-4 justify-between items-center">

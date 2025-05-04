@@ -3,8 +3,9 @@ import { FaGlobe, FaRegComment, FaThumbsUp, FaUser } from "react-icons/fa";
 import { GoDot, GoDotFill } from "react-icons/go";
 import { FiThumbsUp } from "react-icons/fi";
 import { PiShareFat } from "react-icons/pi";
+import moment from "moment";
 
-const GetPosts = ({ background, caption, _id, user_id }) => {
+const GetPosts = ({ background, caption, _id, user_id, createdAt }) => {
   return (
     <>
       <div className="shadow-lg xl:w-[70%] mx-auto lg:w-[80%] md:w-[90%] w-[95%] bg-white rounded-md my-2">
@@ -18,7 +19,11 @@ const GetPosts = ({ background, caption, _id, user_id }) => {
             <div className="">
               <h6 className="font-semibold text-sm">RAC Photography</h6>
               <div className="flex items-center gap-1">
-                <div className="text-sm font-semibold text-gray-500">6h</div>
+                <div className="text-sm font-semibold text-gray-500">
+                  {moment().diff(moment(createdAt), "hours") < 24
+                    ? moment(createdAt).fromNow()
+                    : moment(createdAt).format("MMM D, YYYY")}
+                </div>
                 <div className="text-sm h-[2px] w-[2px] rounded-full font-semibold bg-gray-500"></div>
                 <div className="text-sm font-semibold text-gray-500">
                   <FaGlobe />
