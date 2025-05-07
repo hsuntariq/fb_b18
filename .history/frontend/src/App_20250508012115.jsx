@@ -10,7 +10,6 @@ import OtpVerificationPage from "./pages/auth/OTP";
 import Friends from "./components/home/friends/Friends";
 import Feeds from "./components/home/Feeds/Feeds";
 import ClimateCenter from "./pages/home/ClimateCenter";
-import FundraisersPage from "./components/home/SidebarComponents/Fundraisers/FundraisersPage";
 const App = () => {
   return (
     <>
@@ -27,7 +26,6 @@ const App = () => {
           <Route path="/friends" element={<Friends />} />
           <Route path="/feeds" element={<Feeds />}></Route>
           <Route path="/climatecenter" element={<ClimateCenter />} />
-          <Route path="/fundraiser" element={<FundraisersPage />} />
         </Routes>
       </Router>
     </>
