@@ -63,6 +63,8 @@ export default function BasicModal() {
   const { startColor, endColor } = selectedColor;
   const [imagePreview, setImagePreview] = useState(null);
   const [image, setImage] = useState(null);
+  const [imageLoading, setImageLoading] = useState(false);
+  const [imageLink, setImageLink] = useState("");
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
@@ -82,15 +84,15 @@ export default function BasicModal() {
   const { posts, postLoading, postError, postSuccess, postMessage } =
     useSelector((state) => state.album);
   const dispatch = useDispatch();
-  const handlePostUpload = () => {
+  const handlePostUpload = async () => {
     const postData = {
       caption,
       background: selectedColor,
       user_id: user?._id,
+      postImage: await uploadImage(),
     };
 
-    // dispatch(addPostData(postData));
-    uploadImage();
+    dispatch(addPostData(postData));
   };
 
   useEffect(() => {
@@ -119,17 +121,30 @@ export default function BasicModal() {
   const uploadImage = async () => {
     // username : dwtsjgcyf
     // password : ls8frk5v
+    try {
+      setImageLoading(true);
+      const data = new FormData();
+      data.append("file", image);
+      data.append("upload_preset", "ls8frk5v");
 
-    const data = new FormData();
-    data.append("file", image);
-    data.append("upload_preset", "ls8frk5v");
+      const response = await axios.post(
+        "https://api.cloudinary.com/v1_1/dwtsjgcyf/image/upload",
+        data
+      );
 
-    const response = await axios.post(
-      "https://api.cloudinary.com/v1_1/dwtsjgcyf/image/upload",
-      data
-    );
-
-    console.log(response.data.url);
+      setImageLink(response.data.url);
+      console.log(response.data.url);
+      setImage(null);
+      setImagePreview(null);
+      setMedia(false);
+      handleClose();
+      setMediaSelected(false);
+      toast.success("Posted Successfully!");
+      return response.data.url;
+    } catch (error) {
+      console.log(error);
+    }
+    setImageLoading(false);
   };
 
   return (
@@ -155,7 +170,7 @@ export default function BasicModal() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="xl:w-[30%] relative md:w-[40%] overflow-hidden rounded-md mx-auto bg-white shadow-md"
+            className="xl:w-[30%] h-[600px] min-w-[500px] hide-scrollbar overflow-y-scroll relative md:w-[40%] overflow-hidden rounded-md mx-auto bg-white shadow-md"
           >
             <h4 className="text-center p-4 text-xl font-bold">Create post</h4>
             <hr className="hr" />
@@ -387,14 +402,15 @@ export default function BasicModal() {
             <div className="p-4">
               <Button
                 onClick={handlePostUpload}
-                disabled={show || postLoading}
+                disabled={show || postLoading || imageLoading}
                 variant="contained"
                 style={{
-                  background: show ? "#99a1af" : "",
+                  background:
+                    show || imageLoading || postLoading ? "#99a1af" : "",
                 }}
                 className="w-full  my-2"
               >
-                {postLoading ? (
+                {postLoading || imageLoading ? (
                   <ClockLoader size={25} color={"white"} />
                 ) : (
                   "Add Post"

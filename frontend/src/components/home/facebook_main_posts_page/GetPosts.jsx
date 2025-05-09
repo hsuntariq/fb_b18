@@ -4,8 +4,16 @@ import { GoDot, GoDotFill } from "react-icons/go";
 import { FiThumbsUp } from "react-icons/fi";
 import { PiShareFat } from "react-icons/pi";
 import moment from "moment";
+import EmojiReactions from "../Feeds/EmojiReactions";
 
-const GetPosts = ({ background, caption, _id, user_id, createdAt }) => {
+const GetPosts = ({
+  background,
+  caption,
+  _id,
+  user_id,
+  createdAt,
+  postImage,
+}) => {
   return (
     <>
       <div className="shadow-lg xl:w-[70%] mx-auto lg:w-[80%] md:w-[90%] w-[95%] bg-white rounded-md my-2">
@@ -43,11 +51,13 @@ const GetPosts = ({ background, caption, _id, user_id, createdAt }) => {
               : "h-0"
           }
           style={{
-            background: background.image
-              ? `url(${background?.image})`
-              : `linear-gradient(${background?.startColor},${background?.endColor})`,
+            background:
+              background.image || postImage
+                ? `url(${background?.image ? background?.image : postImage})`
+                : `linear-gradient(${background?.startColor},${background?.endColor})`,
             backgroundSize: "contain",
             backgroundPosition: "center center",
+            backgroundRepeat: "no-repeat",
           }}
         >
           {(background.startColor != "#ffffff" || background.image != "") && (
@@ -62,6 +72,7 @@ const GetPosts = ({ background, caption, _id, user_id, createdAt }) => {
         </div>
         <hr className="bg-gray-300 h-[1px] border border-0" />
         <div className="flex justify-between items-center p-3">
+          <EmojiReactions />
           <div className="flex gap-2 justify-center items-center w-full">
             <FiThumbsUp className="text-gray-600" />
             <h6 className="font-semibold text-sm text-gray-600">Like</h6>
