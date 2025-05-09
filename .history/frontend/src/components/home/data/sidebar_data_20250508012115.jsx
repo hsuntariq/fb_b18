@@ -48,7 +48,6 @@ export const sidebar_data = [
     id: 10,
     icon: "/menu_icons/fundraisers.png",
     title: "Fundraisers",
-    link: '/fundraiser'
   },
   {
     id: 11,
