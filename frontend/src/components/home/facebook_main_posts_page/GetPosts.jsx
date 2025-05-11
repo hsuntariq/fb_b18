@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaGlobe, FaRegComment, FaThumbsUp, FaUser } from "react-icons/fa";
 import { GoDot, GoDotFill } from "react-icons/go";
 import { FiThumbsUp } from "react-icons/fi";
 import { PiShareFat } from "react-icons/pi";
 import moment from "moment";
 import EmojiReactions from "../Feeds/EmojiReactions";
+import { useDispatch } from "react-redux";
+import { getReactionsData } from "../../../features/posts/postSlice";
+import axios from "axios";
+import { emojiMap } from "./emojis";
 
 const GetPosts = ({
   background,
@@ -14,6 +18,21 @@ const GetPosts = ({
   createdAt,
   postImage,
 }) => {
+
+  const [likes, setLikes] = useState([])
+
+  const getLikes = async () => {
+    let response = await axios.get(`http://localhost:5174/api/posts/get-reactions/${_id}`);
+    console.log(response.data)
+    setLikes(response.data)
+  }
+  useEffect(() => {
+    getLikes()
+  }, [])
+
+
+
+
   return (
     <>
       <div className="shadow-lg xl:w-[70%] mx-auto lg:w-[80%] md:w-[90%] w-[95%] bg-white rounded-md my-2">
@@ -68,15 +87,55 @@ const GetPosts = ({
         </div>
         <div className="flex gap-2 p-3">
           <div className="flex"></div>
-          <p className="text-gray-600 m-0">You and 14 others</p>
+          <p className="text-gray-600 flex gap-1 m-0">
+            <div className="flex items-center">
+              {(() => {
+                const seen = new Set();
+                const reactions = [];
+
+                likes?.forEach((item) => {
+                  if (!seen.has(item?.type)) {
+                    seen.add(item?.type);
+                    reactions.push(item?.type);
+                  }
+                });
+
+                return reactions.map((type, index) => {
+
+
+                  const emoji = emojiMap[type];
+                  if (!emoji) return null;
+
+                  return (
+                    <span
+                      key={type}
+                      className={`relative z-${50 - index} -ml-2 animate-shake`}
+                      style={{ animationDuration: '0.5s' }}
+                    >
+                      <picture>
+                        <source srcSet={emoji.webp} type="image/webp" />
+                        <img
+                          src={emoji.gif}
+                          alt={emoji.alt}
+                          width="22"
+                          height="22"
+                          className="rounded-full"
+                        />
+                      </picture>
+                    </span>
+                  );
+                });
+              })()}
+            </div>
+
+
+            {likes?.length}
+          </p>
         </div>
         <hr className="bg-gray-300 h-[1px] border border-0" />
         <div className="flex justify-between items-center p-3">
-          <EmojiReactions />
-          <div className="flex gap-2 justify-center items-center w-full">
-            <FiThumbsUp className="text-gray-600" />
-            <h6 className="font-semibold text-sm text-gray-600">Like</h6>
-          </div>
+          <EmojiReactions post_id={_id} likes={likes} />
+
           <div className="flex gap-2 justify-center items-center w-full">
             <FaRegComment className="text-gray-600" />
             <h6 className="font-semibold text-sm text-gray-600">Comment</h6>

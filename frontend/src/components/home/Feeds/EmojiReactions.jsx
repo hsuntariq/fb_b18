@@ -1,34 +1,101 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSelector, useDispatch } from 'react-redux';
+import { addReactionData } from "../../../features/posts/postSlice";
+import { FiThumbsUp } from "react-icons/fi";
 
 const emojis = [
-  { name: "like", icon: "👍", color: "bg-blue-100" },
-  { name: "love", icon: "❤️", color: "bg-red-100" },
-  { name: "haha", icon: "😂", color: "bg-yellow-100" },
-  { name: "wow", icon: "😮", color: "bg-yellow-100" },
-  { name: "sad", icon: "😢", color: "bg-yellow-100" },
-  { name: "angry", icon: "😡", color: "bg-orange-100" },
+  { name: "like", icon: "👍", code: "1f44d", bgColor: "bg-blue-100", color: 'text-blue-400' },
+  { name: "love", icon: "❤️", code: "2764-fe0f", bgColor: "bg-red-100", color: 'text-red-400' },
+  { name: "haha", icon: "😂", code: "1f602", bgColor: "bg-yellow-100", color: 'text-yellow-400' },
+  { name: "wow", icon: "😮", code: "1f62e", bgColor: "bg-yellow-100", color: 'text-yellow-400' },
+  { name: "sad", icon: "😢", code: "1f622", bgColor: "bg-yellow-100", color: 'text-yellow-400' },
+  { name: "angry", icon: "😡", code: "1f621", bgColor: "bg-orange-100", color: 'text-orange-400' },
 ];
 
-export default function EmojiReactions() {
+export default function EmojiReactions({ post_id, likes }) {
   const [showBar, setShowBar] = useState(false);
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const [selected, setSelected] = useState(null);
   const [hoveredEmoji, setHoveredEmoji] = useState(null);
 
+  const handleReaction = (reaction) => {
+    const reactionData = {
+      post_id,
+      user_id: user?._id,
+      emoji: reaction.name
+    };
+    dispatch(addReactionData(reactionData));
+    setSelected(reaction);
+  };
+
+
+
+  const isPresent = likes?.find((item) => {
+    return item?.id == user?._id
+  })
+
+
+
+
+
+
+
+
+  const selectedEmoji = emojis.find(e => e.name === selected?.name);
   return (
-    <div className="relative inline-block text-center">
-      <button
+    <div className="relative w-full inline-block text-center">
+      <div
+        className={`flex gap-2 justify-center items-center w-full cursor-pointer p-1 rounded-full `}
         onMouseEnter={() => setShowBar(true)}
         onMouseLeave={() => !selected && setShowBar(false)}
-        onClick={() => setShowBar(!showBar)}
-        className={`p-2 border rounded-full ${
-          selected
-            ? emojis.find((e) => e.name === selected).color
-            : "bg-gray-100"
-        } hover:bg-gray-200 transition-colors duration-200`}
       >
-        {selected ? emojis.find((e) => e.name === selected).icon : "👍Like"}
-      </button>
+        {selectedEmoji ? (
+
+          <span
+            className="noto-emoji-animated text-[15px] font-[500]"
+            style={{
+              fontFamily: "'Noto Color Emoji Compat', sans-serif",
+              display: 'flex '
+
+            }}
+            data-code={selectedEmoji.code}
+          >
+            {selectedEmoji.icon} <div className="text-gray-500 text-md">
+              <span className={`${selectedEmoji.color} capitalize`}>{selectedEmoji.name}</span>
+            </div>
+          </span>
+        ) : (
+          <>
+            {isPresent?.type == 'like' && <>
+              <FiThumbsUp className="text-gray-600" />
+              <h6 className="font-semibold text-sm text-gray-600">Like</h6>
+            </>}
+            {isPresent?.type == 'wow' && <>
+              <FiThumbsUp className="text-gray-600" />
+              <h6 className="font-semibold text-sm text-gray-600">Wow</h6>
+            </>}
+            {isPresent?.type == 'sad' && <>
+              <FiThumbsUp className="text-gray-600" />
+              <h6 className="font-semibold text-sm text-gray-600">Sad</h6>
+            </>}
+            {isPresent?.type == 'haha' && <>
+              <FiThumbsUp className="text-gray-600" />
+              <h6 className="font-semibold text-sm text-gray-600">Haha</h6>
+            </>}
+            {isPresent?.type == 'angry' && <>
+              <FiThumbsUp className="text-gray-600" />
+              <h6 className="font-semibold text-sm text-gray-600">Angry</h6>
+            </>}
+            {isPresent?.type == 'love' && <>
+              <FiThumbsUp className="text-gray-600" />
+              <h6 className="font-semibold text-sm text-gray-600">Love</h6>
+            </>}
+
+          </>
+        )}
+      </div>
 
       <AnimatePresence>
         {showBar && (
@@ -55,14 +122,24 @@ export default function EmojiReactions() {
                 onHoverStart={() => setHoveredEmoji(emoji.name)}
                 onHoverEnd={() => setHoveredEmoji(null)}
                 onClick={() => {
-                  setSelected(emoji.name);
+                  setSelected(emoji);
                   setShowBar(false);
+                  handleReaction(emoji);
                 }}
-                className={`cursor-pointer text-2xl p-1 rounded-full transition-all duration-200 ${
-                  hoveredEmoji === emoji.name ? "bg-gray-200" : ""
-                }`}
+                className={`cursor-pointer text-2xl p-1 rounded-full transition-all duration-200 ${hoveredEmoji === emoji.name ? "bg-gray-200" : ""
+                  }`}
               >
-                {emoji.icon}
+                <span
+                  className="noto-emoji-animated"
+                  style={{
+                    fontFamily: "'Noto Color Emoji Compat', sans-serif",
+                    display: 'inline-block',
+                    animation: hoveredEmoji === emoji.name ? 'emoji-animation 1s infinite' : 'none'
+                  }}
+                  data-code={emoji.code}
+                >
+                  {emoji.icon}
+                </span>
               </motion.div>
             ))}
           </motion.div>

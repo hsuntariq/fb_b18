@@ -28,15 +28,52 @@ export const makeReaction = async (req, res) => {
   const { post_id, user_id } = req.params;
   const { emoji } = req.body;
 
-  // find the post
+  try {
+    // Find the post
+    const findPost = await Posts.findById(post_id);
+    if (!findPost) {
+      return res.status(404).send({ message: 'Post not found' });
+    }
 
-  const findPost = await Posts.findById(post_id);
+    // Find the index of the user's reaction
+    const reactionIndex = findPost.likes.findIndex(item => item.id == user_id);
+
+    if (reactionIndex === -1) {
+      // If reaction doesn't exist, add it
+      findPost.likes.push({ type: emoji, id: user_id });
+      await findPost.save();
+    } else {
+      // If reaction exists, update it directly in the array
+      findPost.likes[reactionIndex].type = emoji;
+      await findPost.save();
+    }
+
+    // Save once after all modifications
+    await findPost.save();
+    res.send(findPost);
+
+  } catch (error) {
+    console.error('Error in makeReaction:', error);
+    res.status(500).send({ message: 'Server error' });
+  }
+};
+
+
+export const getReactions = async (req, res) => {
+  const { post_id } = req.params
+
+  const findPost = await Posts.findById(post_id)
   if (!findPost) {
-    res.status(404);
-    throw new Error("Post not found");
+    res.status(404)
+    throw new Error('Post not found')
   }
 
-  findPost.likes.push({ type: emoji, id: user_id });
-  await findPost.save();
-  res.send(findPost);
-};
+
+  res.send(findPost.likes)
+
+
+
+
+
+
+}

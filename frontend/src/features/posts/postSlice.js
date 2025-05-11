@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { addPost, getAllPosts } from "./postService";
+import { addPost, getAllPosts, getReactions, makeReaction } from "./postService";
 
 const initialState = {
   posts: [],
@@ -7,6 +7,10 @@ const initialState = {
   postError: false,
   postSuccess: false,
   postMessage: "",
+  reactionLoading: false,
+  reactionSuccess: false,
+  reactionError: false,
+  reacts: []
 };
 
 export const addPostData = createAsyncThunk(
@@ -31,6 +35,25 @@ export const getPostData = createAsyncThunk(
   }
 );
 
+
+export const addReactionData = createAsyncThunk('add-reaction', async (reactionData, thunkAPI) => {
+  try {
+    return await makeReaction(reactionData)
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.error)
+  }
+})
+
+
+
+export const getReactionsData = createAsyncThunk('get-reactions', async (post_id, thunkAPI) => {
+  try {
+    return await getReactions(post_id)
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.error)
+  }
+})
+
 export const postSlice = createSlice({
   name: "posts",
   initialState,
@@ -40,6 +63,9 @@ export const postSlice = createSlice({
       state.postLoading = false;
       state.postMessage = "";
       state.postSuccess = false;
+      state.reactionSuccess = false;
+      state.reactionError = false;
+
     },
   },
   extraReducers: (builder) => {
@@ -68,7 +94,29 @@ export const postSlice = createSlice({
       .addCase(getPostData.fulfilled, (state, action) => {
         state.postLoading = false;
         state.posts = action.payload;
-      });
+      })
+      .addCase(addReactionData.pending, (state, action) => {
+        state.reactionLoading = true
+      })
+      .addCase(addReactionData.rejected, (state, action) => {
+        state.reactionLoading = false
+        state.reactionError = true
+        state.postMessage = action.payload
+      })
+      .addCase(addReactionData.fulfilled, (state, action) => { })
+      .addCase(getReactionsData.pending, (state, action) => {
+        state.reactionLoading = true
+      })
+      .addCase(getReactionsData.rejected, (state, action) => {
+        state.reactionLoading = false
+        state.reactionError = true
+        state.postMessage = action.payload
+      })
+      .addCase(getReactionsData.fulfilled, (state, action) => {
+        state.reactionLoading = false;
+        state.reactionSuccess = true
+        state.reacts = action.payload
+      })
   },
 });
 
