@@ -77,3 +77,8 @@ export const getReactions = async (req, res) => {
 
 
 }
+
+
+export const addComment = async (req, res) => {
+  res.send('this is a comment')
+}

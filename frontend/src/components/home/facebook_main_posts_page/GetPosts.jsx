@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { getReactionsData } from "../../../features/posts/postSlice";
 import axios from "axios";
 import { emojiMap } from "./emojis";
+import CommentModal from "../Feeds/CommentModal";
 
 const GetPosts = ({
   background,
@@ -135,11 +136,8 @@ const GetPosts = ({
         <hr className="bg-gray-300 h-[1px] border border-0" />
         <div className="flex justify-between items-center p-3">
           <EmojiReactions post_id={_id} likes={likes} />
+          <CommentModal />
 
-          <div className="flex gap-2 justify-center items-center w-full">
-            <FaRegComment className="text-gray-600" />
-            <h6 className="font-semibold text-sm text-gray-600">Comment</h6>
-          </div>
           <div className="flex gap-2 justify-center items-center w-full">
             <PiShareFat className="text-gray-600" />
             <h6 className="font-semibold text-sm text-gray-600">Share</h6>
