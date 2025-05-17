@@ -1,5 +1,14 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji+Compat&display=swap');
 
+.noto-emoji-animated {
+  font-family: 'Noto Color Emoji Compat', sans-serif;
+}
+
+@keyframes emoji-animation {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
 .hide-scrollbar::-webkit-scrollbar {
   width: 0 !important;
 }

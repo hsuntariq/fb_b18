@@ -15,11 +15,13 @@ const MainContent = () => {
   }, []);
   return (
     <>
-      <AddPost />
-      <Stories />
-      {posts?.map((item, index) => {
-        return <GetPosts key={index} {...item} />;
-      })}
+      <div className="h-[93vh] overflow-y-scroll">
+        <AddPost />
+        <Stories />
+        {posts?.map((item, index) => {
+          return <GetPosts key={index} {...item} />;
+        })}
+      </div>
     </>
   );
 };
