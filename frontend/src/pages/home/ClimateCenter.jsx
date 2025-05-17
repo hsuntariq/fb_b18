@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { MdGppGood, MdPersonAddAlt } from "react-icons/md";
@@ -11,6 +12,7 @@ import { MdAir } from "react-icons/md";
 import { TbTemperatureCelsius } from "react-icons/tb";
 import { FcAbout, FcRight } from "react-icons/fc";
 import Navbar from "../../components/home/Navbar";
+
 
 // Animation variants
 const containerVariants = {
