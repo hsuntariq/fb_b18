@@ -30,22 +30,20 @@ export default function EmojiReactions({ post_id, likes }) {
     setSelected(reaction);
   };
 
-  const isPresent = likes?.find((item) => item?.id === user?._id);
+
+
+  const isPresent = likes?.find((item) => {
+    return item?.id == user?._id
+  })
+
+
+
+
+
+
+
 
   const selectedEmoji = emojis.find(e => e.name === selected?.name);
-
-  const getEmojiImage = (name) => {
-    const emoji = emojis.find(e => e.name === name);
-    if (!emoji) return null;
-    const urlBase = "https://fonts.gstatic.com/s/e/notoemoji/latest";
-    return (
-      <picture>
-        <source srcSet={`${urlBase}/${emoji.code}/512.webp`} type="image/webp" />
-        <img src={`${urlBase}/${emoji.code}/512.gif`} alt={emoji.name} width="24" height="24" />
-      </picture>
-    );
-  };
-
   return (
     <div className="relative w-full inline-block text-center">
       <div
@@ -53,15 +51,48 @@ export default function EmojiReactions({ post_id, likes }) {
         onMouseEnter={() => setShowBar(true)}
         onMouseLeave={() => !selected && setShowBar(false)}
       >
-        {isPresent ? (
-          <span className="flex items-center gap-2">
-            {getEmojiImage(isPresent.type)}
-            <h6 className="font-semibold text-sm capitalize text-gray-700">{isPresent.type}</h6>
+        {selectedEmoji ? (
+
+          <span
+            className="noto-emoji-animated text-[15px] font-[500]"
+            style={{
+              fontFamily: "'Noto Color Emoji Compat', sans-serif",
+              display: 'flex '
+
+            }}
+            data-code={selectedEmoji.code}
+          >
+            {selectedEmoji.icon} <div className="text-gray-500 text-md">
+              <span className={`${selectedEmoji.color} capitalize`}>{selectedEmoji.name}</span>
+            </div>
           </span>
         ) : (
           <>
-            <FiThumbsUp className="text-gray-600" />
-            <h6 className="font-semibold text-sm text-gray-600">Like</h6>
+            {isPresent?.type == 'like' && <>
+              <FiThumbsUp className="text-gray-600" />
+              <h6 className="font-semibold text-sm text-gray-600">Like</h6>
+            </>}
+            {isPresent?.type == 'wow' && <>
+              <FiThumbsUp className="text-gray-600" />
+              <h6 className="font-semibold text-sm text-gray-600">Wow</h6>
+            </>}
+            {isPresent?.type == 'sad' && <>
+              <FiThumbsUp className="text-gray-600" />
+              <h6 className="font-semibold text-sm text-gray-600">Sad</h6>
+            </>}
+            {isPresent?.type == 'haha' && <>
+              <FiThumbsUp className="text-gray-600" />
+              <h6 className="font-semibold text-sm text-gray-600">Haha</h6>
+            </>}
+            {isPresent?.type == 'angry' && <>
+              <FiThumbsUp className="text-gray-600" />
+              <h6 className="font-semibold text-sm text-gray-600">Angry</h6>
+            </>}
+            {isPresent?.type == 'love' && <>
+              <FiThumbsUp className="text-gray-600" />
+              <h6 className="font-semibold text-sm text-gray-600">Love</h6>
+            </>}
+
           </>
         )}
       </div>

@@ -3,15 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useSelector, useDispatch } from 'react-redux';
 import { addReactionData } from "../../../features/posts/postSlice";
 import { FiThumbsUp } from "react-icons/fi";
-
-const emojis = [
-  { name: "like", icon: "👍", code: "1f44d", bgColor: "bg-blue-100", color: 'text-blue-400' },
-  { name: "love", icon: "❤️", code: "2764-fe0f", bgColor: "bg-red-100", color: 'text-red-400' },
-  { name: "haha", icon: "😂", code: "1f602", bgColor: "bg-yellow-100", color: 'text-yellow-400' },
-  { name: "wow", icon: "😮", code: "1f62e", bgColor: "bg-yellow-100", color: 'text-yellow-400' },
-  { name: "sad", icon: "😢", code: "1f622", bgColor: "bg-yellow-100", color: 'text-yellow-400' },
-  { name: "angry", icon: "😡", code: "1f621", bgColor: "bg-orange-100", color: 'text-orange-400' },
-];
+import { emojis } from "./emojiData";
 
 export default function EmojiReactions({ post_id, likes }) {
   const [showBar, setShowBar] = useState(false);
@@ -30,38 +22,39 @@ export default function EmojiReactions({ post_id, likes }) {
     setSelected(reaction);
   };
 
-  const isPresent = likes?.find((item) => item?.id === user?._id);
-
+  const isPresent = likes?.find((item) => item?.id == user?._id);
+  const userReaction = emojis.find(e => e.name === isPresent?.type);
   const selectedEmoji = emojis.find(e => e.name === selected?.name);
-
-  const getEmojiImage = (name) => {
-    const emoji = emojis.find(e => e.name === name);
-    if (!emoji) return null;
-    const urlBase = "https://fonts.gstatic.com/s/e/notoemoji/latest";
-    return (
-      <picture>
-        <source srcSet={`${urlBase}/${emoji.code}/512.webp`} type="image/webp" />
-        <img src={`${urlBase}/${emoji.code}/512.gif`} alt={emoji.name} width="24" height="24" />
-      </picture>
-    );
-  };
 
   return (
     <div className="relative w-full inline-block text-center">
       <div
-        className={`flex gap-2 justify-center items-center w-full cursor-pointer p-1 rounded-full `}
+        className={`flex gap-2 justify-center items-center w-full cursor-pointer p-1 rounded-full`}
         onMouseEnter={() => setShowBar(true)}
         onMouseLeave={() => !selected && setShowBar(false)}
       >
-        {isPresent ? (
-          <span className="flex items-center gap-2">
-            {getEmojiImage(isPresent.type)}
-            <h6 className="font-semibold text-sm capitalize text-gray-700">{isPresent.type}</h6>
-          </span>
+        {selectedEmoji ? (
+          <div className="flex items-center gap-1">
+            {selectedEmoji.image}
+            <span className={`${selectedEmoji.color} capitalize text-sm font-semibold`}>
+              {selectedEmoji.name}
+            </span>
+          </div>
         ) : (
           <>
-            <FiThumbsUp className="text-gray-600" />
-            <h6 className="font-semibold text-sm text-gray-600">Like</h6>
+            {isPresent ? (
+              <div className="flex items-center gap-1">
+                {userReaction?.image}
+                <span className={`${userReaction?.color} capitalize text-sm font-semibold`}>
+                  {userReaction?.name}
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1">
+                <FiThumbsUp className="text-gray-600" />
+                <span className="text-gray-600 text-sm font-semibold">Like</span>
+              </div>
+            )}
           </>
         )}
       </div>
@@ -95,20 +88,10 @@ export default function EmojiReactions({ post_id, likes }) {
                   setShowBar(false);
                   handleReaction(emoji);
                 }}
-                className={`cursor-pointer text-2xl p-1 rounded-full transition-all duration-200 ${hoveredEmoji === emoji.name ? "bg-gray-200" : ""
+                className={`cursor-pointer p-1 rounded-full transition-all duration-200 ${hoveredEmoji === emoji.name ? "bg-gray-200" : ""
                   }`}
               >
-                <span
-                  className="noto-emoji-animated"
-                  style={{
-                    fontFamily: "'Noto Color Emoji Compat', sans-serif",
-                    display: 'inline-block',
-                    animation: hoveredEmoji === emoji.name ? 'emoji-animation 1s infinite' : 'none'
-                  }}
-                  data-code={emoji.code}
-                >
-                  {emoji.icon}
-                </span>
+                {emoji.image}
               </motion.div>
             ))}
           </motion.div>
