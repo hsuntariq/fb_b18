@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import Nav from '../../Components/Home/Nav'
 import { MdGppGood, MdPersonAddAlt } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import { IoMdShareAlt } from 'react-icons/io'
