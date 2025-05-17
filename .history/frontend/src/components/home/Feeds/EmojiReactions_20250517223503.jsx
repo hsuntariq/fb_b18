@@ -15,10 +15,12 @@ const emojis = [
 
 export default function EmojiReactions({ post_id, likes }) {
   const [showBar, setShowBar] = useState(false);
+  const [hoveredEmoji, setHoveredEmoji] = useState(null);
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  const [selected, setSelected] = useState(null);
-  const [hoveredEmoji, setHoveredEmoji] = useState(null);
+
+  const isPresent = likes?.find((item) => item?.id === user?._id);
+  const selectedEmoji = emojis.find(e => e.name === isPresent?.type);
 
   const handleReaction = (reaction) => {
     const reactionData = {
@@ -27,66 +29,41 @@ export default function EmojiReactions({ post_id, likes }) {
       emoji: reaction.name
     };
     dispatch(addReactionData(reactionData));
-    setSelected(reaction);
   };
 
-  const isPresent = likes?.find((item) => item?.id == user?._id);
-  const selectedEmoji = emojis.find(e => e.name === selected?.name);
+  const getEmojiImage = (name) => {
+    const emoji = emojis.find(e => e.name === name);
+    if (!emoji) return null;
+    const urlBase = "https://fonts.gstatic.com/s/e/notoemoji/latest";
+    return (
+      <picture>
+        <source srcSet={`${urlBase}/${emoji.code}/512.webp`} type="image/webp" />
+        <img
+          src={`${urlBase}/${emoji.code}/512.gif`}
+          alt={emoji.name}
+          width="24"
+          height="24"
+        />
+      </picture>
+    );
+  };
 
   return (
     <div className="relative w-full inline-block text-center">
       <div
-        className="flex gap-2 justify-center items-center w-full cursor-pointer p-1 rounded-full"
+        className={`flex gap-2 justify-center items-center w-full cursor-pointer p-1 rounded-full`}
         onMouseEnter={() => setShowBar(true)}
-        onMouseLeave={() => !selected && setShowBar(false)}
+        onMouseLeave={() => setShowBar(false)}
       >
-        {selectedEmoji || isPresent ? (
-          <>
-            {/* Show selected emoji or user's existing reaction */}
-            {selectedEmoji ? (
-              <span
-                className="noto-emoji-animated text-[15px] font-[500]"
-                style={{
-                  fontFamily: "'Noto Color Emoji Compat', sans-serif",
-                  display: 'flex'
-                }}
-                data-code={selectedEmoji.code}
-              >
-                {selectedEmoji.icon}
-                <div className="text-gray-500 text-md">
-                  <span className={`${selectedEmoji.color} capitalize`}>
-                    {selectedEmoji.name}
-                  </span>
-                </div>
-              </span>
-            ) : (
-              <>
-                {/* Show the user's existing reaction from the database */}
-                {isPresent && (
-                  <>
-                    <span
-                      className="noto-emoji-animated text-[15px] font-[500]"
-                      style={{
-                        fontFamily: "'Noto Color Emoji Compat', sans-serif",
-                        display: 'flex'
-                      }}
-                      data-code={emojis.find(e => e.name === isPresent.type)?.code}
-                    >
-                      {emojis.find(e => e.name === isPresent.type)?.icon}
-                      <div className="text-gray-500 text-md">
-                        <span className={`${emojis.find(e => e.name === isPresent.type)?.color} capitalize`}>
-                          {isPresent.type}
-                        </span>
-                      </div>
-                    </span>
-                  </>
-                )}
-              </>
-            )}
-          </>
+        {selectedEmoji ? (
+          <span className="flex items-center gap-2">
+            {getEmojiImage(selectedEmoji.name)}
+            <h6 className={`font-semibold text-sm capitalize ${selectedEmoji.color}`}>
+              {selectedEmoji.name}
+            </h6>
+          </span>
         ) : (
           <>
-            {/* Default state - show thumbs up and "Like" when no reaction is selected */}
             <FiThumbsUp className="text-gray-600" />
             <h6 className="font-semibold text-sm text-gray-600">Like</h6>
           </>
@@ -101,7 +78,7 @@ export default function EmojiReactions({ post_id, likes }) {
             exit={{ opacity: 0, y: 20, scale: 0.8 }}
             transition={{ type: "spring", damping: 20, stiffness: 300 }}
             onMouseEnter={() => setShowBar(true)}
-            onMouseLeave={() => !selected && setShowBar(false)}
+            onMouseLeave={() => setShowBar(false)}
             className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white p-2 rounded-full shadow-lg flex gap-1 items-center justify-center"
           >
             {emojis.map((emoji) => (
@@ -118,11 +95,11 @@ export default function EmojiReactions({ post_id, likes }) {
                 onHoverStart={() => setHoveredEmoji(emoji.name)}
                 onHoverEnd={() => setHoveredEmoji(null)}
                 onClick={() => {
-                  setSelected(emoji);
-                  setShowBar(false);
                   handleReaction(emoji);
+                  setShowBar(false);
                 }}
-                className={`cursor-pointer text-2xl p-1 rounded-full transition-all duration-200 ${hoveredEmoji === emoji.name ? "bg-gray-200" : ""}`}
+                className={`cursor-pointer text-2xl p-1 rounded-full transition-all duration-200 ${hoveredEmoji === emoji.name ? "bg-gray-200" : ""
+                  }`}
               >
                 <span
                   className="noto-emoji-animated"

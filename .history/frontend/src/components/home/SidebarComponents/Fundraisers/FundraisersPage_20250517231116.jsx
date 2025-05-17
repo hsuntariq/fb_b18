@@ -6,7 +6,7 @@ const FundraisersPage = () => {
   return (
     <div className="grid grid-cols-12 h-screen overflow-hidden">
       {/* Sidebar */}
-      <div className="col-span-3 hide-scrollbar xl:block hidden h-full overflow-y-auto p-4 border-r">
+      <div className="  hide-scrollbar xl:col-span-3 xl:hidden h-full overflow-y-auto p-4 border-r">
         <FundRaiserSidebar />
       </div>
 
