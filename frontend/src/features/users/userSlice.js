@@ -46,12 +46,23 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+
+    
     userReset: (state) => {
       state.userLoading = false;
       state.userError = false;
       state.userMessage = "";
       state.userSuccess = false;
     },
+logoutUser:(state)=>{
+  state.user = null,
+  state.userError = false,
+  state.userLoading =false,
+  state.userMessage = ""
+  localStorage.removeItem('user')  // Remove users from Local-Store /Changes
+}
+
+
   },
   extraReducers: (builder) => {
     builder

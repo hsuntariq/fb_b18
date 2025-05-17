@@ -1,18 +1,4 @@
-<<<<<<< HEAD
-import React, { useState } from 'react'
-import { motion } from 'framer-motion'
-import { MdGppGood, MdPersonAddAlt } from 'react-icons/md'
-import { Link } from 'react-router-dom'
-import { IoMdShareAlt } from 'react-icons/io'
-import { IoIosInformationCircleOutline } from 'react-icons/io'
-import ReactECharts from 'echarts-for-react'
-import { FaTemperatureLow } from 'react-icons/fa'
-import { WiHumidity } from 'react-icons/wi'
-import { MdAir } from 'react-icons/md'
-import { TbTemperatureCelsius } from 'react-icons/tb'
-import { FcAbout, FcRight } from 'react-icons/fc'
-import Navbar from '../../components/home/Navbar'
-=======
+
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { MdGppGood, MdPersonAddAlt } from "react-icons/md";
@@ -26,7 +12,7 @@ import { MdAir } from "react-icons/md";
 import { TbTemperatureCelsius } from "react-icons/tb";
 import { FcAbout, FcRight } from "react-icons/fc";
 import Navbar from "../../components/home/Navbar";
->>>>>>> main
+
 
 // Animation variants
 const containerVariants = {
