@@ -40,55 +40,60 @@ export default function EmojiReactions({ post_id, likes }) {
         onMouseEnter={() => setShowBar(true)}
         onMouseLeave={() => !selected && setShowBar(false)}
       >
-        {selectedEmoji || isPresent ? (
-          <>
-            {/* Show selected emoji or user's existing reaction */}
-            {selectedEmoji ? (
-              <span
-                className="noto-emoji-animated text-[15px] font-[500]"
-                style={{
-                  fontFamily: "'Noto Color Emoji Compat', sans-serif",
-                  display: 'flex'
-                }}
-                data-code={selectedEmoji.code}
-              >
-                {selectedEmoji.icon}
-                <div className="text-gray-500 text-md">
-                  <span className={`${selectedEmoji.color} capitalize`}>
-                    {selectedEmoji.name}
-                  </span>
-                </div>
+        {selectedEmoji ? (
+          <span
+            className="noto-emoji-animated text-[15px] font-[500]"
+            style={{
+              fontFamily: "'Noto Color Emoji Compat', sans-serif",
+              display: 'flex'
+            }}
+            data-code={selectedEmoji.code}
+          >
+            {selectedEmoji.icon}
+            <div className="text-gray-500 text-md">
+              <span className={`${selectedEmoji.color} capitalize`}>
+                {selectedEmoji.name}
               </span>
-            ) : (
-              <>
-                {/* Show the user's existing reaction from the database */}
-                {isPresent && (
-                  <>
-                    <span
-                      className="noto-emoji-animated text-[15px] font-[500]"
-                      style={{
-                        fontFamily: "'Noto Color Emoji Compat', sans-serif",
-                        display: 'flex'
-                      }}
-                      data-code={emojis.find(e => e.name === isPresent.type)?.code}
-                    >
-                      {emojis.find(e => e.name === isPresent.type)?.icon}
-                      <div className="text-gray-500 text-md">
-                        <span className={`${emojis.find(e => e.name === isPresent.type)?.color} capitalize`}>
-                          {isPresent.type}
-                        </span>
-                      </div>
-                    </span>
-                  </>
-                )}
-              </>
-            )}
-          </>
+            </div>
+          </span>
         ) : (
           <>
-            {/* Default state - show thumbs up and "Like" when no reaction is selected */}
-            <FiThumbsUp className="text-gray-600" />
-            <h6 className="font-semibold text-sm text-gray-600">Like</h6>
+            {isPresent?.type === 'like' && (
+              <>
+                <FiThumbsUp className="text-gray-600" />
+                <h6 className="font-semibold text-sm text-gray-600">Like</h6>
+              </>
+            )}
+            {isPresent?.type === 'wow' && (
+              <>
+                <FiThumbsUp className="text-gray-600" />
+                <h6 className="font-semibold text-sm text-gray-600">Wow</h6>
+              </>
+            )}
+            {isPresent?.type === 'sad' && (
+              <>
+                <FiThumbsUp className="text-gray-600" />
+                <h6 className="font-semibold text-sm text-gray-600">Sad</h6>
+              </>
+            )}
+            {isPresent?.type === 'haha' && (
+              <>
+                <FiThumbsUp className="text-gray-600" />
+                <h6 className="font-semibold text-sm text-gray-600">Haha</h6>
+              </>
+            )}
+            {isPresent?.type === 'angry' && (
+              <>
+                <FiThumbsUp className="text-gray-600" />
+                <h6 className="font-semibold text-sm text-gray-600">Angry</h6>
+              </>
+            )}
+            {isPresent?.type === 'love' && (
+              <>
+                <FiThumbsUp className="text-gray-600" />
+                <h6 className="font-semibold text-sm text-gray-600">Love</h6>
+              </>
+            )}
           </>
         )}
       </div>
