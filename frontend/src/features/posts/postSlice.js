@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { addPost, getAllPosts } from "./postService";
+import { addComment, addPost, getAllPosts, getReactions, makeReaction } from "./postService";
 
 const initialState = {
   posts: [],
@@ -7,6 +7,13 @@ const initialState = {
   postError: false,
   postSuccess: false,
   postMessage: "",
+  reactionLoading: false,
+  reactionSuccess: false,
+  reactionError: false,
+  reacts: [],
+  commentLoading: false,
+  commentSuccess: false,
+  commentError: false
 };
 
 export const addPostData = createAsyncThunk(
@@ -31,6 +38,38 @@ export const getPostData = createAsyncThunk(
   }
 );
 
+
+export const addReactionData = createAsyncThunk('add-reaction', async (reactionData, thunkAPI) => {
+  try {
+    return await makeReaction(reactionData)
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.error)
+  }
+})
+
+
+
+export const getReactionsData = createAsyncThunk('get-reactions', async (post_id, thunkAPI) => {
+  try {
+    return await getReactions(post_id)
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.error)
+  }
+})
+
+
+
+export const addCommentData = createAsyncThunk('add-comment', async (postData, thunkAPI) => {
+  try {
+    const token = thunkAPI.getState().auth.user.token
+    return await addComment(postData, token)
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.error)
+  }
+})
+
+
+
 export const postSlice = createSlice({
   name: "posts",
   initialState,
@@ -40,6 +79,11 @@ export const postSlice = createSlice({
       state.postLoading = false;
       state.postMessage = "";
       state.postSuccess = false;
+      state.reactionSuccess = false;
+      state.reactionError = false;
+      state.commentLoading = false
+      state.commentError = false
+      state.commentSuccess = false
     },
   },
   extraReducers: (builder) => {
@@ -55,7 +99,7 @@ export const postSlice = createSlice({
       .addCase(addPostData.fulfilled, (state, action) => {
         state.postLoading = false;
         state.postSuccess = true;
-        state.posts.push(action.payload);
+        state.posts.unshift(action.payload);
       })
       .addCase(getPostData.pending, (state, action) => {
         state.postLoading = true;
@@ -66,10 +110,44 @@ export const postSlice = createSlice({
         state.postMessage = action.payload;
       })
       .addCase(getPostData.fulfilled, (state, action) => {
-        state.postSuccess = true;
         state.postLoading = false;
         state.posts = action.payload;
-      });
+      })
+      .addCase(addReactionData.pending, (state, action) => {
+        state.reactionLoading = true
+      })
+      .addCase(addReactionData.rejected, (state, action) => {
+        state.reactionLoading = false
+        state.reactionError = true
+        state.postMessage = action.payload
+      })
+      .addCase(addReactionData.fulfilled, (state, action) => { })
+      .addCase(getReactionsData.pending, (state, action) => {
+        state.reactionLoading = true
+      })
+      .addCase(getReactionsData.rejected, (state, action) => {
+        state.reactionLoading = false
+        state.reactionError = true
+        state.postMessage = action.payload
+      })
+      .addCase(getReactionsData.fulfilled, (state, action) => {
+        state.reactionLoading = false;
+        state.reactionSuccess = true
+        state.reacts = action.payload
+      })
+      .addCase(addCommentData.pending, (state, action) => {
+        state.commentLoading = true
+      })
+      .addCase(addCommentData.rejected, (state, action) => {
+        state.commentLoading = false
+        state.commentError = true
+        state.postMessage = action.payload
+      })
+      .addCase(addCommentData.fulfilled, (state, action) => {
+        state.commentLoading = false;
+        state.commentSuccess = true
+        // state.posts.comments.push(action.payload)
+      })
   },
 });
 

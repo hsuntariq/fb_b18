@@ -9,7 +9,6 @@ import { useDispatch } from "react-redux";
 import { getReactionsData } from "../../../features/posts/postSlice";
 import axios from "axios";
 import { emojiMap } from "./emojis";
-import CommentModal from "../Feeds/CommentModal";
 
 const GetPosts = ({
   background = {
@@ -35,6 +34,7 @@ const GetPosts = ({
     getLikes();
   }, []);
 
+  // Determine caption position based on conditions
   const showCaptionAbove = postImage || (background.startColor === "#ffffff" && !background.image);
   const showCaptionCentered = !postImage && (background.image || background.startColor !== "#ffffff");
 
@@ -64,15 +64,17 @@ const GetPosts = ({
         </div>
       </div>
 
+      {/* Show caption above if postImage exists or it's default background */}
       {showCaptionAbove && (
         <p className="text-gray-900 p-3 my-2 capitalize">{caption}</p>
       )}
 
+      {/* Image container - only show if there's a background or post image */}
       {(background.image || postImage || background.startColor !== "#ffffff") && (
         <div
           className="h-[400px] relative"
           style={{
-            background: postImage
+            background: postImage 
               ? `url(${postImage})`
               : background.image
                 ? `url(${background.image})`
@@ -82,7 +84,7 @@ const GetPosts = ({
             backgroundRepeat: "no-repeat",
           }}
         >
-
+          {/* Show caption centered if there's a background image or color (and no postImage) */}
           {showCaptionCentered && (
             <p className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 my-2 text-white capitalize text-4xl">
               {caption}
@@ -91,6 +93,7 @@ const GetPosts = ({
         </div>
       )}
 
+      {/* Rest of the component remains unchanged */}
       <div className="flex gap-2 p-3">
         <div className="flex"></div>
         <p className="text-gray-600 flex gap-1 m-0">
@@ -137,8 +140,11 @@ const GetPosts = ({
       <hr className="bg-gray-300 h-[1px] border border-0" />
       <div className="flex justify-between items-center p-3">
         <EmojiReactions post_id={_id} likes={likes} />
-        <CommentModal post_id={_id} />
 
+        <div className="flex gap-2 justify-center items-center w-full">
+          <FaRegComment className="text-gray-600" />
+          <h6 className="font-semibold text-sm text-gray-600">Comment</h6>
+        </div>
         <div className="flex gap-2 justify-center items-center w-full">
           <PiShareFat className="text-gray-600" />
           <h6 className="font-semibold text-sm text-gray-600">Share</h6>

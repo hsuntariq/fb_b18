@@ -12,6 +12,7 @@ import Feeds from "./components/home/Feeds/Feeds";
 import Profile from "./Profiles/Profile";
 
 import ClimateCenter from "./pages/home/ClimateCenter";
+import FundraisersPage from "./components/home/SidebarComponents/Fundraisers/FundraisersPage";
 const App = () => {
   return (
     <>
@@ -29,6 +30,7 @@ const App = () => {
           <Route path="/feeds" element={<Feeds />}></Route>
           <Route path="/climatecenter" element={<ClimateCenter />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/fundraiser" element={<FundraisersPage />} />
         </Routes>
       </Router>
     </>

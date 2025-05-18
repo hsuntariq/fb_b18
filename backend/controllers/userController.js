@@ -2,6 +2,7 @@ import { User } from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import asyncHandler from "express-async-handler";
+import jwt from 'jsonwebtoken'
 const generateOTP = () => {
   let random = Math.random() * 999999;
   if (random < 100000) {
@@ -150,16 +151,13 @@ export const registerUser = async (req, res) => {
   }
 
   // check whether the email exists or not
-
   let checkUser = await User.findOne({ m_mail });
-
   if (checkUser) {
     res.status(401);
     throw new Error("Email already registered");
   }
 
   // hash / encrypt the password
-
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const newUser = await User.create({
@@ -175,10 +173,27 @@ export const registerUser = async (req, res) => {
     otp: generateOTP(),
   });
 
+  // send OTP
   sendOTP(m_mail, newUser);
 
-  res.send(newUser);
+
+
+  // ✅ Send token in response
+  res.send({
+    _id: newUser._id,
+    f_name: newUser.f_name,
+    l_name: newUser.l_name,
+    date: newUser.date,
+    month: newUser.month,
+    year: newUser.year,
+    gender: newUser.gender,
+    m_mail: newUser.m_mail,
+    pronouns: newUser.pronouns,
+    otp: newUser.otp,
+    token: await generateToken(newUser._id)
+  });
 };
+
 
 // verify OTP
 
@@ -228,9 +243,28 @@ export const loginUser = async (req, res) => {
   }
 
   if (await bcrypt.compare(password, checkMail.password)) {
-    res.send(checkMail);
+    res.send({
+      _id: checkMail._id,
+      f_name: checkMail.f_name,
+      l_name: checkMail.l_name,
+      date: checkMail.date,
+      month: checkMail.month,
+      year: checkMail.year,
+      gender: checkMail.gender,
+      m_mail: checkMail.m_mail,
+      pronouns: checkMail.pronouns,
+      otp: checkMail.otp,
+      token: await generateToken(checkMail._id)
+    });
   } else {
     res.status(401);
     throw new Error("Invalid Password");
   }
 };
+
+
+const generateToken = async (id) => {
+  return await jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: '15d'
+  })
+}
