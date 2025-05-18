@@ -2,7 +2,7 @@ import { User } from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import asyncHandler from "express-async-handler";
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 const generateOTP = () => {
   let random = Math.random() * 999999;
   if (random < 100000) {
@@ -176,8 +176,6 @@ export const registerUser = async (req, res) => {
   // send OTP
   sendOTP(m_mail, newUser);
 
-
-
   // ✅ Send token in response
   res.send({
     _id: newUser._id,
@@ -190,10 +188,9 @@ export const registerUser = async (req, res) => {
     m_mail: newUser.m_mail,
     pronouns: newUser.pronouns,
     otp: newUser.otp,
-    token: await generateToken(newUser._id)
+    token: await generateToken(newUser._id),
   });
 };
-
 
 // verify OTP
 
@@ -254,7 +251,7 @@ export const loginUser = async (req, res) => {
       m_mail: checkMail.m_mail,
       pronouns: checkMail.pronouns,
       otp: checkMail.otp,
-      token: await generateToken(checkMail._id)
+      token: await generateToken(checkMail._id),
     });
   } else {
     res.status(401);
@@ -262,9 +259,8 @@ export const loginUser = async (req, res) => {
   }
 };
 
-
 const generateToken = async (id) => {
   return await jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '15d'
-  })
-}
+    expiresIn: "15d",
+  });
+};
