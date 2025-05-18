@@ -25,3 +25,9 @@ export const verifyOTP = async (otpData) => {
   );
   return response.data;
 };
+
+
+export const getMyInfo = async (user_id) => {
+  const response = await axios.get(`${base_url}/my-info/${user_id}`);
+  return response.data
+}

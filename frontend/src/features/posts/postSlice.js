@@ -145,8 +145,19 @@ export const postSlice = createSlice({
       })
       .addCase(addCommentData.fulfilled, (state, action) => {
         state.commentLoading = false;
-        state.commentSuccess = true
-        // state.posts.comments.push(action.payload)
+        state.commentSuccess = true;
+
+
+        state.posts = state.posts.map((item, index) => {
+          if (item._id == action.payload.comments[0].post_id) {
+            return {
+              ...item,
+              comments: action.payload.comments
+            }
+          }
+          return item
+        })
+
       })
   },
 });

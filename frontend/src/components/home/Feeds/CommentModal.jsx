@@ -13,8 +13,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Avatar, Tooltip } from '@mui/material';
 import { motion } from 'framer-motion';
 import { addCommentData } from '../../../features/posts/postSlice';
+import { deepPurple } from '@mui/material/colors';
 
-export default function CommentModal({ post_id }) {
+export default function CommentModal({ post_id, background, postImage, caption, comments }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -30,6 +31,9 @@ export default function CommentModal({ post_id }) {
     setComment('');
   };
 
+  const showCaptionAbove = postImage || (background.startColor === "#ffffff" && !background.image);
+  const showCaptionCentered = !postImage && (background.image || background.startColor !== "#ffffff");
+
   return (
     <div>
       <div onClick={handleOpen} className="flex gap-2 cursor-pointer justify-center items-center w-full">
@@ -44,7 +48,7 @@ export default function CommentModal({ post_id }) {
         aria-describedby="modal-modal-description"
       >
         <Box className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white text-black rounded w-[95%] max-w-2xl max-h-[90vh] overflow-y-auto">
-          
+
           {/* Header */}
           <div className='flex items-center justify-center h-[70px] border-b border-gray-300'>
             <h1 className='font-semibold text-2xl'>{user?.f_name}'s Post</h1>
@@ -66,16 +70,39 @@ export default function CommentModal({ post_id }) {
                 <p className="text-xs text-gray-500">5h · 🌐</p>
               </div>
             </div>
-            <p className='mt-2'>Love to see this view</p>
+            <p className='mt-2'>
+              {caption}
+            </p>
           </div>
 
           {/* Image */}
           <div className="w-full">
-            <img
-              src="https://scontent.fisb17-1.fna.fbcdn.net/v/t39.30808-6/498948044_698083949390945_3426704093410471690_n.jpg"
-              alt="Post"
-              className="w-full rounded"
-            />
+            {showCaptionAbove && (
+              <p className="text-gray-900 p-3 my-2 capitalize">{caption}</p>
+            )}
+
+            {(background.image || postImage || background.startColor !== "#ffffff") && (
+              <div
+                className="h-[400px] relative"
+                style={{
+                  background: postImage
+                    ? `url(${postImage})`
+                    : background.image
+                      ? `url(${background.image})`
+                      : `linear-gradient(${background.startColor},${background.endColor})`,
+                  backgroundSize: "contain",
+                  backgroundPosition: "center center",
+                  backgroundRepeat: "no-repeat",
+                }}
+              >
+
+                {showCaptionCentered && (
+                  <p className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 my-2 text-white capitalize text-4xl">
+                    {caption}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Reactions */}
@@ -93,16 +120,23 @@ export default function CommentModal({ post_id }) {
 
           {/* Existing Comment (example) */}
           <div className="p-4 text-sm w-full">
-            <div className='flex gap-2'>
-              <Avatar sx={{ width: 30, height: 30 }} alt="User" src="/static/images/avatar/1.jpg" />
-              <div className='flex flex-col gap-1 p-1 bg-gray-100 rounded'>
-                <h1 className='font-normal'>Wajeeha Durrani</h1>
-                <p>Very beautiful, good job 👍💖💜</p>
+            {comments?.map((item, index) => {
+              return <div className='flex gap-2 my-2'>
+                <Avatar sx={{ width: 40, height: 40 }}
+                  src="/static/images/avatar/1.jpg" >
+                  {item?.user?.f_name[0]} {item?.user?.l_name[0]}
+                </Avatar>
+                <div className='flex flex-col gap-1 p-1 bg-gray-100 rounded'>
+                  <h1 className='font-normal capitalize'>
+                    {item?.user?.f_name}{item?.user?.l_name}
+                  </h1>
+                  <p>{item?.comment}</p>
+                </div>
+                <span className='w-[30px] h-[30px] mt-2 rounded-full cursor-pointer hover:bg-gray-100 flex items-center justify-center'>
+                  <BsThreeDots className='text-xl text-gray-500' />
+                </span>
               </div>
-              <span className='w-[30px] h-[30px] mt-2 rounded-full cursor-pointer hover:bg-gray-100 flex items-center justify-center'>
-                <BsThreeDots className='text-xl text-gray-500' />
-              </span>
-            </div>
+            })}
           </div>
 
           {/* Comment Input */}

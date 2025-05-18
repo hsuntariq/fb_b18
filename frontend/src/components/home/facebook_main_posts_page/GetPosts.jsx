@@ -10,6 +10,7 @@ import { getReactionsData } from "../../../features/posts/postSlice";
 import axios from "axios";
 import { emojiMap } from "./emojis";
 import CommentModal from "../Feeds/CommentModal";
+import { getMyData } from "../../../features/users/userSlice";
 
 const GetPosts = ({
   background = {
@@ -22,18 +23,31 @@ const GetPosts = ({
   user_id,
   createdAt,
   postImage,
+  comments
 }) => {
   const [likes, setLikes] = useState([]);
 
   const getLikes = async () => {
     let response = await axios.get(`http://localhost:5174/api/posts/get-reactions/${_id}`);
-    console.log(response.data);
     setLikes(response.data);
   };
+
+  const dispatch = useDispatch()
+
 
   useEffect(() => {
     getLikes();
   }, []);
+
+  const [userInfo, setUserInfo] = useState({})
+
+  useEffect(() => {
+
+
+  }, [])
+
+
+
 
   const showCaptionAbove = postImage || (background.startColor === "#ffffff" && !background.image);
   const showCaptionCentered = !postImage && (background.image || background.startColor !== "#ffffff");
@@ -48,7 +62,9 @@ const GetPosts = ({
             </div>
           </div>
           <div className="">
-            <h6 className="font-semibold text-sm">RAC Photography</h6>
+            <h6 className="font-semibold text-sm">
+              {userInfo?.f_name}
+            </h6>
             <div className="flex items-center gap-1">
               <div className="text-sm font-semibold text-gray-500">
                 {moment().diff(moment(createdAt), "hours") < 24
@@ -92,52 +108,58 @@ const GetPosts = ({
       )}
 
       <div className="flex gap-2 p-3">
-        <div className="flex"></div>
-        <p className="text-gray-600 flex gap-1 m-0">
-          <div className="flex items-center">
-            {(() => {
-              const seen = new Set();
-              const reactions = [];
+        <div className="flex justify-between w-full">
 
-              likes?.forEach((item) => {
-                if (!seen.has(item?.type)) {
-                  seen.add(item?.type);
-                  reactions.push(item?.type);
-                }
-              });
+          <p className="text-gray-600 flex gap-1 m-0">
+            <div className="flex items-center">
+              {(() => {
+                const seen = new Set();
+                const reactions = [];
 
-              return reactions.map((type, index) => {
-                const emoji = emojiMap[type];
-                if (!emoji) return null;
+                likes?.forEach((item) => {
+                  if (!seen.has(item?.type)) {
+                    seen.add(item?.type);
+                    reactions.push(item?.type);
+                  }
+                });
 
-                return (
-                  <span
-                    key={type}
-                    className={`relative z-${50 - index} -ml-2 animate-shake`}
-                    style={{ animationDuration: '0.5s' }}
-                  >
-                    <picture>
-                      <source srcSet={emoji.webp} type="image/webp" />
-                      <img
-                        src={emoji.gif}
-                        alt={emoji.alt}
-                        width="22"
-                        height="22"
-                        className="rounded-full"
-                      />
-                    </picture>
-                  </span>
-                );
-              });
-            })()}
-          </div>
-          {likes?.length}
-        </p>
+                return reactions.map((type, index) => {
+                  const emoji = emojiMap[type];
+                  if (!emoji) return null;
+
+                  return (
+                    <span
+                      key={type}
+                      className={`relative z-${50 - index} -ml-2 animate-shake`}
+                      style={{ animationDuration: '0.5s' }}
+                    >
+                      <picture>
+                        <source srcSet={emoji.webp} type="image/webp" />
+                        <img
+                          src={emoji.gif}
+                          alt={emoji.alt}
+                          width="22"
+                          height="22"
+                          className="rounded-full"
+                        />
+                      </picture>
+                    </span>
+                  );
+                });
+              })()}
+            </div>
+            <div className="flex justify-between items-center">
+              {likes?.length}
+            </div>
+          </p>
+          {comments?.length} comments
+
+        </div>
       </div>
       <hr className="bg-gray-300 h-[1px] border border-0" />
       <div className="flex justify-between items-center p-3">
         <EmojiReactions post_id={_id} likes={likes} />
-        <CommentModal post_id={_id} />
+        <CommentModal comments={comments} caption={caption} postImage={postImage} background={background} post_id={_id} />
 
         <div className="flex gap-2 justify-center items-center w-full">
           <PiShareFat className="text-gray-600" />

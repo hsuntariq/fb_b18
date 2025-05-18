@@ -1,5 +1,4 @@
 import React from "react";
-import Navbar from "../component/home/Navbar";
 import { IoCameraSharp, IoMenu } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import {
@@ -15,7 +14,7 @@ const Profile = () => {
   return (
     <>
       <div className="bg-white">
-        <Navbar />
+        {/* <Navbar /> */}
         <div
           style={{
             backgroundImage: `linear-gradient(to top, darkgray 0%, #3B82F6 60%, #3C82F5 60%, #3C82F5 100%)`,

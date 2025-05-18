@@ -91,7 +91,7 @@ export const addComment = async (req, res) => {
     throw new Error('Post Not Found')
   }
 
-  findPost.comments.push({ user: req.user, comment })
+  findPost.comments.push({ user: req.user, comment, post_id })
 
   await findPost.save()
   res.send(findPost)

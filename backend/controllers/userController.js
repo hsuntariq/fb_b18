@@ -268,3 +268,10 @@ const generateToken = async (id) => {
     expiresIn: '15d'
   })
 }
+
+
+export const getUserInfo = async (req, res) => {
+  const { user_id } = req.params
+  const myInfo = await User.findById(user_id)
+  res.send(myInfo)
+}
