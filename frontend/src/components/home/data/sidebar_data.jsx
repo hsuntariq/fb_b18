@@ -42,7 +42,7 @@ export const sidebar_data = [
   {
     id: 9,
     icon: "/menu_icons/ads.png",
-    title: "Ads Manager",
+    title: "Ads Managere",
   },
   {
     id: 10,
@@ -58,6 +58,7 @@ export const sidebar_data = [
     id: 12,
     icon: "/menu_icons/climate.png",
     title: "Climate Science Centre",
+    link : "/climatecenter",
   },
   {
     id: 13,

@@ -17,3 +17,8 @@ export const addPost = async (req, res) => {
 
   res.send(newPost);
 };
+
+export const getPosts = async (req, res) => {
+  const allPosts = await Posts.find();
+  res.send(allPosts);
+};
