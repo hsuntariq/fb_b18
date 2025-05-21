@@ -19,7 +19,7 @@ export const navbar_data = [
     id: 1,
     title: "Video",
     icon: <MdOutlineOndemandVideo size={25} />,
-    link: "/videos",
+    link: "/video",
   },
   {
     id: 1,
