@@ -12,6 +12,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@iconscout/react-unicons": "^2.2.4",
     "@mui/material": "^6.4.8",
     "@reduxjs/toolkit": "^2.7.0",
     "@tailwindcss/postcss": "^4.0.15",

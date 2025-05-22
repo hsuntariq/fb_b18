@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  getUserInfo,
   loginUser,
   registerUser,
   verifyOTP,
@@ -10,3 +11,4 @@ export const userRouter = express.Router();
 userRouter.post("/reg-user", registerUser);
 userRouter.post("/login-user", loginUser);
 userRouter.post("/verify-otp/:user_id", verifyOTP);
+userRouter.get('/my-info/:user_id', getUserInfo)

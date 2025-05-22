@@ -10,84 +10,106 @@ import { getReactionsData } from "../../../features/posts/postSlice";
 import axios from "axios";
 import { emojiMap } from "./emojis";
 import CommentModal from "../Feeds/CommentModal";
+import { getMyData } from "../../../features/users/userSlice";
 
 const GetPosts = ({
-  background,
+  background = {
+    startColor: '#ffffff',
+    endColor: '#ffffff',
+    image: ''
+  },
   caption,
   _id,
   user_id,
   createdAt,
   postImage,
+  comments
 }) => {
-
-  const [likes, setLikes] = useState([])
+  const [likes, setLikes] = useState([]);
 
   const getLikes = async () => {
     let response = await axios.get(`http://localhost:5174/api/posts/get-reactions/${_id}`);
-    console.log(response.data)
-    setLikes(response.data)
-  }
+    setLikes(response.data);
+  };
+
+  const dispatch = useDispatch()
+
+
   useEffect(() => {
-    getLikes()
+    getLikes();
+  }, []);
+
+  const [userInfo, setUserInfo] = useState({})
+
+  useEffect(() => {
+
+
   }, [])
 
 
 
 
+  const showCaptionAbove = postImage || (background.startColor === "#ffffff" && !background.image);
+  const showCaptionCentered = !postImage && (background.image || background.startColor !== "#ffffff");
+
   return (
-    <>
-      <div className="shadow-lg xl:w-[70%] mx-auto lg:w-[80%] md:w-[90%] w-[95%] bg-white rounded-md my-2">
-        <div className="flex p-3 justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-3">
-              <div className="w-[45px] h-[45px] bg-gray-200 border-gray-300 rounded-full border flex justify-center items-center">
-                <FaUser size={25} className="text-gray-600" />
-              </div>
+    <div className="shadow-lg xl:w-[70%] mx-auto lg:w-[80%] md:w-[90%] w-[95%] bg-white rounded-md my-2">
+      <div className="flex p-3 justify-between items-center">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <div className="w-[45px] h-[45px] bg-gray-200 border-gray-300 rounded-full border flex justify-center items-center">
+              <FaUser size={25} className="text-gray-600" />
             </div>
-            <div className="">
-              <h6 className="font-semibold text-sm">RAC Photography</h6>
-              <div className="flex items-center gap-1">
-                <div className="text-sm font-semibold text-gray-500">
-                  {moment().diff(moment(createdAt), "hours") < 24
-                    ? moment(createdAt).fromNow()
-                    : moment(createdAt).format("MMM D, YYYY")}
-                </div>
-                <div className="text-sm h-[2px] w-[2px] rounded-full font-semibold bg-gray-500"></div>
-                <div className="text-sm font-semibold text-gray-500">
-                  <FaGlobe />
-                </div>
+          </div>
+          <div className="">
+            <h6 className="font-semibold text-sm">
+              {userInfo?.f_name}
+            </h6>
+            <div className="flex items-center gap-1">
+              <div className="text-sm font-semibold text-gray-500">
+                {moment().diff(moment(createdAt), "hours") < 24
+                  ? moment(createdAt).fromNow()
+                  : moment(createdAt).format("MMM D, YYYY")}
+              </div>
+              <div className="text-sm h-[2px] w-[2px] rounded-full font-semibold bg-gray-500"></div>
+              <div className="text-sm font-semibold text-gray-500">
+                <FaGlobe />
               </div>
             </div>
           </div>
         </div>
-        {(background.startColor == "#ffffff" || background.image != "") && (
-          <p className="text-gray-900  p-3 my-2 capitalize ">{caption}</p>
-        )}
+      </div>
 
+      {showCaptionAbove && (
+        <p className="text-gray-900 p-3 my-2 capitalize">{caption}</p>
+      )}
+
+      {(background.image || postImage || background.startColor !== "#ffffff") && (
         <div
-          className={
-            background.startColor != "#ffffff" || background.image != ""
-              ? "h-[400px] relative"
-              : "h-0"
-          }
+          className="h-[400px] relative"
           style={{
-            background:
-              background.image || postImage
-                ? `url(${background?.image ? background?.image : postImage})`
-                : `linear-gradient(${background?.startColor},${background?.endColor})`,
+            background: postImage
+              ? `url(${postImage})`
+              : background.image
+                ? `url(${background.image})`
+                : `linear-gradient(${background.startColor},${background.endColor})`,
             backgroundSize: "contain",
             backgroundPosition: "center center",
             backgroundRepeat: "no-repeat",
           }}
         >
-          {(background.startColor != "#ffffff" || background.image != "") && (
+
+          {showCaptionCentered && (
             <p className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 my-2 text-white capitalize text-4xl">
               {caption}
             </p>
           )}
         </div>
-        <div className="flex gap-2 p-3">
-          <div className="flex"></div>
+      )}
+
+      <div className="flex gap-2 p-3">
+        <div className="flex justify-between w-full">
+
           <p className="text-gray-600 flex gap-1 m-0">
             <div className="flex items-center">
               {(() => {
@@ -102,8 +124,6 @@ const GetPosts = ({
                 });
 
                 return reactions.map((type, index) => {
-
-
                   const emoji = emojiMap[type];
                   if (!emoji) return null;
 
@@ -128,23 +148,25 @@ const GetPosts = ({
                 });
               })()}
             </div>
-
-
-            {likes?.length}
+            <div className="flex justify-between items-center">
+              {likes?.length}
+            </div>
           </p>
-        </div>
-        <hr className="bg-gray-300 h-[1px] border border-0" />
-        <div className="flex justify-between items-center p-3">
-          <EmojiReactions post_id={_id} likes={likes} />
-          <CommentModal />
+          {comments?.length} comments
 
-          <div className="flex gap-2 justify-center items-center w-full">
-            <PiShareFat className="text-gray-600" />
-            <h6 className="font-semibold text-sm text-gray-600">Share</h6>
-          </div>
         </div>
       </div>
-    </>
+      <hr className="bg-gray-300 h-[1px] border border-0" />
+      <div className="flex justify-between items-center p-3">
+        <EmojiReactions post_id={_id} likes={likes} />
+        <CommentModal comments={comments} caption={caption} postImage={postImage} background={background} post_id={_id} />
+
+        <div className="flex gap-2 justify-center items-center w-full">
+          <PiShareFat className="text-gray-600" />
+          <h6 className="font-semibold text-sm text-gray-600">Share</h6>
+        </div>
+      </div>
+    </div>
   );
 };
 

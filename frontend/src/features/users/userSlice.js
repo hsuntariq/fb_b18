@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { logUser, regUserService, verifyOTP } from "./userService";
+import { getMyInfo, logUser, regUserService, verifyOTP } from "./userService";
 
 const initialState = {
   user: JSON.parse(localStorage.getItem("user")) || null,
@@ -41,17 +41,38 @@ export const verifyUserOTP = createAsyncThunk(
     }
   }
 );
+export const getMyData = createAsyncThunk(
+  "my-data",
+  async (user_id, thunkAPI) => {
+    try {
+      return await getMyInfo(user_id);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.error);
+    }
+  }
+);
 
 export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+
+
     userReset: (state) => {
       state.userLoading = false;
       state.userError = false;
       state.userMessage = "";
       state.userSuccess = false;
     },
+    logoutUser: (state) => {
+      state.user = null,
+        state.userError = false,
+        state.userLoading = false,
+        state.userMessage = ""
+      localStorage.removeItem('user')  // Remove users from Local-Store /Changes
+    }
+
+
   },
   extraReducers: (builder) => {
     builder

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { addPost, getAllPosts, getReactions, makeReaction } from "./postService";
+import { addComment, addPost, getAllPosts, getReactions, makeReaction } from "./postService";
 
 const initialState = {
   posts: [],
@@ -10,7 +10,10 @@ const initialState = {
   reactionLoading: false,
   reactionSuccess: false,
   reactionError: false,
-  reacts: []
+  reacts: [],
+  commentLoading: false,
+  commentSuccess: false,
+  commentError: false
 };
 
 export const addPostData = createAsyncThunk(
@@ -54,6 +57,19 @@ export const getReactionsData = createAsyncThunk('get-reactions', async (post_id
   }
 })
 
+
+
+export const addCommentData = createAsyncThunk('add-comment', async (postData, thunkAPI) => {
+  try {
+    const token = thunkAPI.getState().auth.user.token
+    return await addComment(postData, token)
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.error)
+  }
+})
+
+
+
 export const postSlice = createSlice({
   name: "posts",
   initialState,
@@ -65,7 +81,9 @@ export const postSlice = createSlice({
       state.postSuccess = false;
       state.reactionSuccess = false;
       state.reactionError = false;
-
+      state.commentLoading = false
+      state.commentError = false
+      state.commentSuccess = false
     },
   },
   extraReducers: (builder) => {
@@ -116,6 +134,30 @@ export const postSlice = createSlice({
         state.reactionLoading = false;
         state.reactionSuccess = true
         state.reacts = action.payload
+      })
+      .addCase(addCommentData.pending, (state, action) => {
+        state.commentLoading = true
+      })
+      .addCase(addCommentData.rejected, (state, action) => {
+        state.commentLoading = false
+        state.commentError = true
+        state.postMessage = action.payload
+      })
+      .addCase(addCommentData.fulfilled, (state, action) => {
+        state.commentLoading = false;
+        state.commentSuccess = true;
+
+
+        state.posts = state.posts.map((item, index) => {
+          if (item._id == action.payload.comments[0].post_id) {
+            return {
+              ...item,
+              comments: action.payload.comments
+            }
+          }
+          return item
+        })
+
       })
   },
 });

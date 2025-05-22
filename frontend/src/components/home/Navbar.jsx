@@ -21,20 +21,18 @@ const Navbar = () => {
     <>
       <nav className="flex  justify-between items-center relative">
         <div
-          className={`flex transition-all p-3 duration-300 items-center gap-2 ${
-            focused && "shadow-2xl shadow-gray-400 p-3 rounded-md"
-          } `}
+          className={`flex transition-all p-3 duration-300 items-center gap-2 ${focused && "shadow-2xl shadow-gray-400 p-3 rounded-md"
+            } `}
         >
           <div
             className={`h-[25px] rounded-full flex justify-center items-center w-[25px] hover:bg-gray-100 cursor-pointer `}
           >
             <IoIosArrowRoundBack
               size={25}
-              className={`text-gray-600  transition-all duration-300 ${
-                focused
-                  ? "opacity-100  -translate-x-0"
-                  : "opacity-0  translate-x-15"
-              }`}
+              className={`text-gray-600  transition-all duration-300 ${focused
+                ? "opacity-100  -translate-x-0"
+                : "opacity-0  translate-x-15"
+                }`}
             />
           </div>
           <img
@@ -79,11 +77,10 @@ const Navbar = () => {
           {/* grid */}
           <div onClick={() => setOpenMenu(!openMenu)} className="relative">
             <div
-              className={`h-[40px] rounded-full ${
-                openMenu
-                  ? "text-[#0861F2] bg-[#DFE9F2] hover:bg-[#d2e5f4]"
-                  : "bg-gray-200 hover:bg-gray-300 text-gray-800"
-              }  cursor-pointer  w-[40px] flex justify-center items-center`}
+              className={`h-[40px] rounded-full ${openMenu
+                ? "text-[#0861F2] bg-[#DFE9F2] hover:bg-[#d2e5f4]"
+                : "bg-gray-200 hover:bg-gray-300 text-gray-800"
+                }  cursor-pointer  w-[40px] flex justify-center items-center`}
             >
               <BsFillGrid3X3GapFill size={22} className="" />
             </div>

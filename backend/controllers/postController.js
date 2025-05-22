@@ -80,5 +80,25 @@ export const getReactions = async (req, res) => {
 
 
 export const addComment = async (req, res) => {
-  res.send('this is a comment')
+
+  const { post_id } = req.params
+  const user_id = req.user._id
+  const { comment } = req.body
+
+  const findPost = await Posts.findById(post_id)
+  if (!findPost) {
+    res.status(404)
+    throw new Error('Post Not Found')
+  }
+
+  findPost.comments.push({ user: req.user, comment, post_id })
+
+  await findPost.save()
+  res.send(findPost)
+
+
+
+
+
+
 }

@@ -1,0 +1,21 @@
+import React from 'react';
+import FundRaiserSidebar from './FundRaiserSidebar';
+import Fundraisers from './Fundraisers';
+
+const FundraisersPage = () => {
+  return (
+    <div className="grid grid-cols-12 h-screen overflow-hidden">
+      {/* Sidebar */}
+      <div className="col-span-3 hide-scrollbar hidden xl:block h-full overflow-y-auto p-4 border-r">
+        <FundRaiserSidebar />
+      </div>
+
+      {/* Main Content */}
+      <div className="xl:col-span-9 col-span-12  hide-scrollbar h-full overflow-y-auto p-4">
+        <Fundraisers />
+      </div>
+    </div>
+  );
+};
+
+export default FundraisersPage;
