@@ -9,7 +9,7 @@ const Menu = () => {
       <div className="fixed top-0 left-0 bg-transparent min-h-screen w-full"></div>
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-[#F8F9FB] absolute w-[650px] h-[90vh] overflow-y-scroll -translate-x-3/4 px-4 mt-3 "
+        className="bg-[#F8F9FB] absolute w-[650px] z-50 h-[90vh] overflow-y-scroll -translate-x-3/4 px-4 mt-3 "
       >
         <h2 className="text-black px-3 z-40 py-3 text-2xl  bg-[#F8F9FB] font-bold sticky top-0">
           Menu
