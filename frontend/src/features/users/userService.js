@@ -31,3 +31,8 @@ export const getMyInfo = async (user_id) => {
   const response = await axios.get(`${base_url}/my-info/${user_id}`);
   return response.data
 }
+
+export const getAllUsers = async () => {
+  const response = await axios.get(`${base_url}/get-all-users`);
+  return response.data
+}

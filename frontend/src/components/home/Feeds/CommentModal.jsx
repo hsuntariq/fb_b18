@@ -15,7 +15,7 @@ import { motion } from 'framer-motion';
 import { addCommentData } from '../../../features/posts/postSlice';
 import { deepPurple } from '@mui/material/colors';
 
-export default function CommentModal({ post_id, background, postImage, caption, comments }) {
+export default function CommentModal({ post_id, background, postImage, caption, comments, user_info }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -47,11 +47,11 @@ export default function CommentModal({ post_id, background, postImage, caption, 
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white text-black rounded w-[95%] max-w-2xl max-h-[90vh] overflow-y-auto">
+        <Box className="absolute top-1/2 left-1/2 border-0 -translate-x-1/2 -translate-y-1/2 bg-white text-black rounded w-[95%] max-w-2xl max-h-[90vh] overflow-y-auto">
 
           {/* Header */}
           <div className='flex items-center justify-center h-[70px] border-b border-gray-300'>
-            <h1 className='font-semibold text-2xl'>{user?.f_name}'s Post</h1>
+            <h1 className='font-semibold text-2xl'>{user_info?.f_name}'s Post</h1>
           </div>
 
           {/* Post Details */}
@@ -64,8 +64,7 @@ export default function CommentModal({ post_id, background, postImage, caption, 
               />
               <div>
                 <p className="font-semibold text-sm">
-                  Imtiaz Hussain Photography <span className="text-gray-500">is in</span>{" "}
-                  <span className="font-semibold text-sm">Gilgit-Baltistan.</span>
+                  {user_info?.f_name} {user_info?.l_name}
                 </p>
                 <p className="text-xs text-gray-500">5h · 🌐</p>
               </div>

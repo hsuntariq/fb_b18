@@ -70,6 +70,9 @@ export const addCommentData = createAsyncThunk('add-comment', async (postData, t
 
 
 
+
+
+
 export const postSlice = createSlice({
   name: "posts",
   initialState,
@@ -121,7 +124,17 @@ export const postSlice = createSlice({
         state.reactionError = true
         state.postMessage = action.payload
       })
-      .addCase(addReactionData.fulfilled, (state, action) => { })
+      .addCase(addReactionData.fulfilled, (state, action) => {
+        state.posts = state.posts.map((item, index) => {
+          if (item._id == action.payload.likes[0].post_id) {
+            return {
+              ...item,
+              likes: action.payload.likes
+            }
+          }
+          return item
+        })
+      })
       .addCase(getReactionsData.pending, (state, action) => {
         state.reactionLoading = true
       })

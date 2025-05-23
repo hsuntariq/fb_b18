@@ -1,12 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "../Navbar";
 import { IoMdSettings } from "react-icons/io";
 import { FriendsSidebar } from "./FriendsSidebar";
 import { HiMiniUsers } from "react-icons/hi2";
 import SingleFriend from "./SingleFriend";
 import PeopleKNow from "./PeopleKNow";
-
+import { useDispatch, useSelector } from 'react-redux'
+import { getAllUsersData } from "../../../features/users/userSlice";
+import Skeleton from 'react-loading-skeleton'
 const Friends = () => {
+  const { allUsers, userLoading } = useSelector((state) => state.auth)
+  const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(getAllUsersData())
+  }, [])
+
   return (
     <>
       <div className="sticky top-0 z-10 shadow-md bg-white ">
@@ -78,17 +86,34 @@ const Friends = () => {
           </div>
           <hr className="border-0 bg-gray-300 my-3   h-[1px]" />
           <div className="flex items-center justify-between">
-            <p className="text-xl font-bold">Friends requests</p>
+            <p className="text-xl font-bold">Suggestion</p>
             <p className="text-blue-500 cursor-pointer p-2 rounded-md hover:bg-gray-200">
               People you may know
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            <PeopleKNow />
-            <PeopleKNow />
-            <PeopleKNow />
-            <PeopleKNow />
-            <PeopleKNow />
+            {userLoading ? (
+              <>
+                {Array.from({ length: 5 }).map((_, index) => {
+                  return <div className="flex shadow p-3 bg-white flex-col">
+                    <Skeleton height={200} />
+                    <Skeleton height={20} />
+                    <Skeleton height={30} />
+                    <Skeleton height={30} />
+                  </div>
+                })}
+              </>
+            ) : (
+              <>
+                {allUsers?.slice(0, 5).map((item, index) => {
+                  return <PeopleKNow {...item} key={index} />
+                })}
+
+              </>
+            )}
+
+
+
           </div>
         </div>
       </div>

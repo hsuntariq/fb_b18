@@ -34,9 +34,9 @@ export default function EmojiReactions({ post_id, likes }) {
   const selectedEmoji = emojis.find(e => e.name === selected?.name);
 
   return (
-    <div className="relative w-full inline-block text-center">
+    <div className="relative justify-center inline-block text-center">
       <div
-        className="flex gap-2 justify-center items-center w-full cursor-pointer p-1 rounded-full"
+        className="flex gap-2 justify-center items-center  cursor-pointer p-1 rounded-full"
         onMouseEnter={() => setShowBar(true)}
         onMouseLeave={() => !selected && setShowBar(false)}
       >

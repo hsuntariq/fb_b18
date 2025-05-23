@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getMyInfo, logUser, regUserService, verifyOTP } from "./userService";
+import { getAllUsers, getMyInfo, logUser, regUserService, verifyOTP } from "./userService";
 
 const initialState = {
   user: JSON.parse(localStorage.getItem("user")) || null,
@@ -7,6 +7,7 @@ const initialState = {
   userLoading: false,
   userSuccess: false,
   userMessage: "",
+  allUsers: []
 };
 
 export const regUserSlice = createAsyncThunk(
@@ -52,6 +53,15 @@ export const getMyData = createAsyncThunk(
   }
 );
 
+
+export const getAllUsersData = createAsyncThunk('get-all-users', async (_, thunkAPI) => {
+  try {
+    return await getAllUsers()
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.error)
+  }
+})
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -89,6 +99,19 @@ export const authSlice = createSlice({
         state.userLoading = false;
         state.userSuccess = true;
         state.user = action.payload;
+      })
+      .addCase(getAllUsersData.pending, (state, action) => {
+        state.userLoading = true;
+      })
+      .addCase(getAllUsersData.rejected, (state, action) => {
+        state.userLoading = false;
+        state.userMessage = action.payload;
+        state.userError = true;
+      })
+      .addCase(getAllUsersData.fulfilled, (state, action) => {
+        state.userLoading = false;
+        state.userSuccess = true;
+        state.allUsers = action.payload;
       })
 
       .addCase(loginUser.pending, (state, action) => {

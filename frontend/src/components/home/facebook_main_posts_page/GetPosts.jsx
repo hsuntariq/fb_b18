@@ -5,7 +5,7 @@ import { FiThumbsUp } from "react-icons/fi";
 import { PiShareFat } from "react-icons/pi";
 import moment from "moment";
 import EmojiReactions from "../Feeds/EmojiReactions";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getReactionsData } from "../../../features/posts/postSlice";
 import axios from "axios";
 import { emojiMap } from "./emojis";
@@ -20,27 +20,30 @@ const GetPosts = ({
   },
   caption,
   _id,
-  user_id,
   createdAt,
   postImage,
   comments,
+  user_id
 }) => {
   const [likes, setLikes] = useState([]);
+
+  const { posts } = useSelector((state) => state.album)
+
 
   const getLikes = async () => {
     let response = await axios.get(`http://localhost:5174/api/posts/get-reactions/${_id}`);
     setLikes(response.data);
   };
 
+
+
   const dispatch = useDispatch();
 
   useEffect(() => {
     getLikes();
-  }, []);
+  }, [posts]);
 
-  const [userInfo, setUserInfo] = useState({});
 
-  useEffect(() => {}, []);
 
   const isWhite = (color) => {
     const whiteVariants = ["#fff", "#ffffff", "white"];
@@ -60,7 +63,9 @@ const GetPosts = ({
             </div>
           </div>
           <div className="">
-            <h6 className="font-semibold text-sm">{userInfo?.f_name}</h6>
+            <h6 className="font-semibold text-sm">
+              {user_id?.f_name} {user_id?.l_name}
+            </h6>
             <div className="flex items-center gap-1">
               <div className="text-sm font-semibold text-gray-500">
                 {moment().diff(moment(createdAt), "hours") < 24
@@ -87,8 +92,8 @@ const GetPosts = ({
             background: postImage
               ? `url(${postImage})`
               : background.image
-              ? `url(${background.image})`
-              : `linear-gradient(${background.startColor},${background.endColor})`,
+                ? `url(${background.image})`
+                : `linear-gradient(${background.startColor},${background.endColor})`,
             backgroundSize: "contain",
             backgroundPosition: "center center",
             backgroundRepeat: "no-repeat",
@@ -149,7 +154,6 @@ const GetPosts = ({
           {comments?.length} comments
         </div>
       </div>
-
       <hr className="bg-gray-300 h-[1px] border border-0" />
       <div className="flex justify-between items-center p-3">
         <EmojiReactions post_id={_id} likes={likes} />
@@ -159,6 +163,7 @@ const GetPosts = ({
           postImage={postImage}
           background={background}
           post_id={_id}
+          user_info={user_id}
         />
 
         <div className="flex gap-2 justify-center items-center w-full">
