@@ -28,7 +28,6 @@ const GetPosts = ({
   user_id
 }) => {
   const [likes, setLikes] = useState([]);
-  const [optionMenu, setOptionMenu] = useState(false);
 
   const { posts } = useSelector((state) => state.album)
 
@@ -58,7 +57,7 @@ const GetPosts = ({
 
   return (
     <div className="shadow-lg xl:w-[70%] mx-auto lg:w-[80%] md:w-[90%] w-[95%] bg-white rounded-md my-2">
-      <div className="flex p-3 justify-between items-center relative">
+      <div className="flex p-3 justify-between items-center">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-3">
             <div className="w-[45px] h-[45px] bg-gray-200 border-gray-300 rounded-full border flex justify-center items-center">
@@ -82,7 +81,7 @@ const GetPosts = ({
             </div>
           </div>
         </div>
-        <div ><RxDotsHorizontal onClick={()=>setOptionMenu(!optionMenu)} className="cursor-pointer relative" /> {optionMenu && <OptionMenu/>} </div>
+        <div><RxDotsHorizontal className="relative" /> <OptionMenu/></div>
       </div>
 
       {showCaptionAbove && (
@@ -104,7 +103,7 @@ const GetPosts = ({
           }}
         >
           {showCaptionCentered && (
-            <p className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  my-2 text-white capitalize text-2xl">
+            <p className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 my-2 text-white capitalize text-4xl">
               {caption}
             </p>
           )}

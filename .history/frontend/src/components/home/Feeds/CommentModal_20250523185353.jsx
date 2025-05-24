@@ -97,7 +97,7 @@ export default function CommentModal({ post_id, background, postImage, caption, 
                 }}
               >
                 {showCaptionCentered && (
-                  <p className={`text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 my-2 capitalize ${isWhite(background.startColor) ? 'text-black' : 'text-white'} ${postImage ? 'text-xl' : 'text-2xl'}`}>
+                  <p className={`text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 my-2 capitalize ${isWhite(background.startColor) ? 'text-black' : 'text-white'} ${postImage ? 'text-xl' : 'text-4xl'}`}>
                     {caption}
                   </p>
                 )}
@@ -162,13 +162,6 @@ export default function CommentModal({ post_id, background, postImage, caption, 
                 placeholder={`Comment as ${user?.f_name}`}
                 className="outline-none resize-none w-full border-0 p-3 rounded-xl"
                 rows={1}
-                onKeyDown={(e)=>{
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleComment();
-                    setComment('');
-                  }
-                }}
               ></textarea>
 
               <div className="flex gap-2 justify-between items-center px-3 pb-2">

@@ -70,7 +70,7 @@ const GetVideos = () => {
       <hr className="bg-gray-300 h-[1px] border-0" />
 
       {/* Bottom actions */}
-     <div className="flex gap-2 py-3">
+     <div className="flex gap-2py-3">
            <div className="flex justify-between w-full items-center p-3">
            {/* <FaThumbsUp className="text-gray-600" /> */}
            <EmojiReactions/>
