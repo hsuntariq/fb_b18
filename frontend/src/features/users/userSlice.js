@@ -7,7 +7,8 @@ const initialState = {
   userLoading: false,
   userSuccess: false,
   userMessage: "",
-  allUsers: []
+  allUsers: [],
+  myInfo: {}
 };
 
 export const regUserSlice = createAsyncThunk(
@@ -141,7 +142,20 @@ export const authSlice = createSlice({
         state.userLoading = false;
         state.userSuccess = true;
         state.user = action.payload;
-      });
+      })
+      .addCase(getMyData.pending, (state, action) => {
+        state.userLoading = true
+      })
+      .addCase(getMyData.rejected, (state, action) => {
+        state.userLoading = false
+        state.userError = true
+        state.userMessage = action.payload
+      })
+      .addCase(getMyData.fulfilled, (state, action) => {
+        state.userLoading = false
+        state.userSuccess = true
+        state.myInfo = action.payload
+      })
   },
 });
 

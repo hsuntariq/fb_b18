@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { IoCameraSharp, IoMenu } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import {
@@ -9,8 +9,22 @@ import {
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import { PiLineSegmentsThin } from "react-icons/pi";
 import { IoIosSettings } from "react-icons/io";
-import { BsGridFill } from "react-icons/bs";
+import { BsChat, BsChatDots, BsGridFill } from "react-icons/bs";
+import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux'
+import { getMyData } from "../features/users/userSlice";
+import MessagePanel from "../components/home/chat/MessagePanel";
 const Profile = () => {
+
+  const { myInfo } = useSelector((state) => state.auth)
+  const { id } = useParams()
+  const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(getMyData(id))
+  }, [])
+
+
+
   return (
     <>
       <div className="bg-white">
@@ -26,8 +40,9 @@ const Profile = () => {
             <p className="hidden lg:block">Add Cover Photo</p>
           </div>
         </div>
-        <div className=" flex-col xl:flex items-center justify-center  lg:justify-between w-[100%] xl:w-[70%]  xl:mx-auto px-10  ">
-          <div className="flex-col lg:flex items-center  w-full lg:translate-x-0 gap-1 lg:gap-5">
+
+        <div className="justify-center items-center flex-col xl:flex items-center justify-center  lg:justify-between w-[100%] xl:w-[70%]  xl:mx-auto px-10  ">
+          <div className="lg:flex items-center  w-full lg:translate-x-0 gap-1 lg:gap-5">
             <div className="-translate-y-20 translate-x-[50% ,50%] lg:translate-x-[0%] ">
               <div className="h-[180px] w-[180px] border border-gray-300 bg-gray-200 rounded-full flex items-end justify-center outline-4 outline-white overflow-hidden">
                 <FaUser size={130} color="gray" />
@@ -36,25 +51,35 @@ const Profile = () => {
                 <IoCameraSharp size={20} />
               </div>
             </div>
-            <div className="flex-col -translate-y-10">
-              <p className="text-4xl font-bold">Muhammad Asim</p>
-              <p>7 friends</p>
+            <div className="flex w-full justify-between">
+              <div className="flex-col -translate-y-10">
+                <p className="text-4xl font-bold">
+                  {myInfo?.f_name} {myInfo?.l_name}
+                </p>
+                <p>7 friends</p>
+              </div>
+              <div className="flex -translate-y-10 items-center justify-center gap-2 ">
+                <button className="bg-blue-500 rounded-md px-4 py-2 text-white font-semibold whitespace-nowrap">
+                  {" "}
+                  + Add to story
+                </button>
+                <button className="bg-gray-200 rounded-md px-4 py-2 text-black font-semibold whitespace-nowrap flex items-center gap-2">
+                  <BsChatDots />
+                  {" "}
+                  Message
+                </button>
+                <MessagePanel />
+                <button className="bg-gray-200  rounded-md px-4 py-2 whitespace-nowrap ">
+                  <MdEdit className="inline" /> Edit profile
+                </button>
+                <button className="bg-gray-200  rounded-md p-3 ">
+                  <MdKeyboardArrowDown size={15} />
+                </button>
+              </div>
             </div>
           </div>
-          <div className="flex items-center justify-center gap-2 -translate-y-5">
-            <button className="bg-blue-500 rounded-md px-4 py-2 text-white font-semibold whitespace-nowrap">
-              {" "}
-              + Add to story
-            </button>
-            <button className="bg-gray-200  rounded-md px-4 py-2 whitespace-nowrap ">
-              <MdEdit className="inline" /> Edit profile
-            </button>
-            <button className="bg-gray-200  rounded-md p-3 ">
-              <MdKeyboardArrowDown size={15} />
-            </button>
-          </div>
         </div>
-        <ul className="flex items-center w-[100%] lg:w-[70%] mx-auto gap-7 text-gray-600 font-semibold pt-1 border-t-2 border-t-gray-200">
+        <ul className="flex items-center w-[100%] overflow-x-scroll lg:w-[70%] mx-auto gap-7 text-gray-600 font-semibold pt-1 border-t-2 border-t-gray-200">
           <li className=" p-2 py-3 cursor-pointer text-blue-500 border-b-4 border-b-blue-500 ">
             Posts
           </li>
@@ -174,7 +199,7 @@ const Profile = () => {
                 <FaUser size={30} color="gray" />
               </div>
               <div className="rounded-full bg-gray-200 w-full p-2">
-                What's in your Mind? User
+                What's in your Mind? {myInfo?.f_name}
               </div>
             </div>
             <hr className="my-3 border-0 bg-gray-300 h-[1px]" />

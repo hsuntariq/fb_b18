@@ -31,7 +31,7 @@ const App = () => {
           <Route path="/friends" element={<Friends />} />
           <Route path="/feeds" element={<Feeds />}></Route>
           <Route path="/climatecenter" element={<ClimateCenter />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:id" element={<Profile />} />
           <Route path="/fundraiser" element={<FundraisersPage />} />
           <Route path="/stories" element={<AllStories />} />
 

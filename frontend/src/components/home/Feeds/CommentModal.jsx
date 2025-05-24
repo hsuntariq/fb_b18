@@ -110,11 +110,11 @@ export default function CommentModal({ post_id, background, postImage, caption, 
             <div className="flex gap-2 cursor-pointer justify-center items-center w-full">
               <EmojiReactions />
             </div>
-            <div className="flex gap-2 cursor-pointer justify-center items-center w-full"> 
+            <div className="flex gap-2 cursor-pointer justify-center items-center w-full">
               <FaRegComment className="text-gray-600" />
               <h6 className="font-semibold text-sm text-gray-600">Comment</h6>
             </div>
-    
+
             <div className="flex gap-2 cursor-pointer justify-center items-center w-full">
               <PiShareFat className="text-gray-600" />
               <h6 className="font-semibold text-sm text-gray-600">Share</h6>
@@ -127,11 +127,11 @@ export default function CommentModal({ post_id, background, postImage, caption, 
               return <div className='flex gap-2 my-2'>
                 <Avatar sx={{ width: 40, height: 40 }}
                   src="/static/images/avatar/1.jpg" >
-                  {item?.user?.f_name[0]} {item?.user?.l_name[0]}
+                  {item?.user?.f_name[0]}  {item?.user?.l_name[0]}
                 </Avatar>
                 <div className='flex flex-col gap-1 p-1 bg-gray-100 rounded'>
                   <h1 className='font-normal capitalize'>
-                    {item?.user?.f_name}{item?.user?.l_name}
+                    {item?.user?.f_name} {item?.user?.l_name}
                   </h1>
                   <p>{item?.comment}</p>
                 </div>
@@ -162,7 +162,7 @@ export default function CommentModal({ post_id, background, postImage, caption, 
                 placeholder={`Comment as ${user?.f_name}`}
                 className="outline-none resize-none w-full border-0 p-3 rounded-xl"
                 rows={1}
-                onKeyDown={(e)=>{
+                onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     handleComment();

@@ -35,12 +35,14 @@ const Navbar = () => {
                 }`}
             />
           </div>
-          <img
-            width={40}
-            src="/images/logo.png"
-            className={`transition-all duration-300 ${focused && "hidden"}`}
-            alt="facebook logo"
-          />
+          <Link to='/'>
+            <img
+              width={40}
+              src="/images/logo.png"
+              className={`transition-all duration-300 ${focused && "hidden"}`}
+              alt="facebook logo"
+            />
+          </Link>
           <div
             className={`flex  gap-2 items-center bg-gray-100 px-5 py-2 rounded-full`}
           >
