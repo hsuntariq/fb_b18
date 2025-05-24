@@ -28,7 +28,6 @@ const GetPosts = ({
   user_id
 }) => {
   const [likes, setLikes] = useState([]);
-  const [optionMenu, setOptionMenu] = useState(false);
 
   const { posts } = useSelector((state) => state.album)
 
@@ -82,7 +81,7 @@ const GetPosts = ({
             </div>
           </div>
         </div>
-        <div ><RxDotsHorizontal onClick={()=>setOptionMenu(!optionMenu)} className="cursor-pointer relative" /> {optionMenu && <OptionMenu/>} </div>
+        <div ><RxDotsHorizontal className="relative" /> {optionMenu && <OptionMenu/>} </div>
       </div>
 
       {showCaptionAbove && (
@@ -104,7 +103,7 @@ const GetPosts = ({
           }}
         >
           {showCaptionCentered && (
-            <p className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  my-2 text-white capitalize text-2xl">
+            <p className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 my-2 text-white capitalize text-4xl">
               {caption}
             </p>
           )}

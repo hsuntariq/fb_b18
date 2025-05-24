@@ -31,13 +31,8 @@ export default function CommentModal({ post_id, background, postImage, caption, 
     setComment('');
   };
 
-  const isWhite = (color) => {
-    const whiteVariants = ["#fff", "#ffffff", "white"];
-    return whiteVariants.includes(color?.toLowerCase());
-  };
-
-  const showCaptionAbove = postImage || (isWhite(background.startColor) && !background.image);
-  const showCaptionCentered = !postImage && (background.image || !isWhite(background.startColor));
+  const showCaptionAbove = postImage || (background.startColor === "#ffffff" && !background.image);
+  const showCaptionCentered = !postImage && (background.image || background.startColor !== "#ffffff");
 
   return (
     <div>
@@ -74,17 +69,20 @@ export default function CommentModal({ post_id, background, postImage, caption, 
                 <p className="text-xs text-gray-500">5h · 🌐</p>
               </div>
             </div>
+            <p className='mt-2'>
+              {caption}
+            </p>
           </div>
 
-          {/* Caption and Image */}
+          {/* Image */}
           <div className="w-full">
             {showCaptionAbove && (
               <p className="text-gray-900 p-3 my-2 capitalize">{caption}</p>
             )}
 
-            {(background.image || postImage || !isWhite(background.startColor)) && (
+            {(background.image || postImage || background.startColor !== "#ffffff") && (
               <div
-                className={`relative ${isWhite(background.startColor) && !background.image && !postImage ? 'h-[100px]' : 'h-[400px]'}`}
+                className="h-[400px] relative"
                 style={{
                   background: postImage
                     ? `url(${postImage})`
@@ -96,8 +94,9 @@ export default function CommentModal({ post_id, background, postImage, caption, 
                   backgroundRepeat: "no-repeat",
                 }}
               >
+
                 {showCaptionCentered && (
-                  <p className={`text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 my-2 capitalize ${isWhite(background.startColor) ? 'text-black' : 'text-white'} ${postImage ? 'text-xl' : 'text-2xl'}`}>
+                  <p className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 my-2 text-white capitalize text-4xl">
                     {caption}
                   </p>
                 )}
@@ -106,22 +105,22 @@ export default function CommentModal({ post_id, background, postImage, caption, 
           </div>
 
           {/* Reactions */}
-          <div className="flex justify-between items-center p-3">
-            <div className="flex gap-2 cursor-pointer justify-center items-center w-full">
-              <EmojiReactions />
-            </div>
-            <div className="flex gap-2 cursor-pointer justify-center items-center w-full"> 
-              <FaRegComment className="text-gray-600" />
-              <h6 className="font-semibold text-sm text-gray-600">Comment</h6>
-            </div>
-    
-            <div className="flex gap-2 cursor-pointer justify-center items-center w-full">
-              <PiShareFat className="text-gray-600" />
-              <h6 className="font-semibold text-sm text-gray-600">Share</h6>
-            </div>
-          </div>
+       <div className="flex justify-between items-center p-3">
+               <div className="flex gap-2 justify-center items-center w-full">
+               <EmojiReactions />
+               </div>
+               <div className="flex gap-2 justify-center items-center w-full"> 
+               <FaRegComment className="text-gray-600" />
+               <h6 className="font-semibold text-sm text-gray-600">Comment</h6>
+               </div>
+       
+               <div className="flex gap-2 justify-center items-center w-full">
+                 <PiShareFat className="text-gray-600" />
+                 <h6 className="font-semibold text-sm text-gray-600">Share</h6>
+               </div>
+             </div>
 
-          {/* Existing Comments */}
+          {/* Existing Comment (example) */}
           <div className="p-4 text-sm w-full">
             {comments?.map((item, index) => {
               return <div className='flex gap-2 my-2'>
@@ -162,13 +161,6 @@ export default function CommentModal({ post_id, background, postImage, caption, 
                 placeholder={`Comment as ${user?.f_name}`}
                 className="outline-none resize-none w-full border-0 p-3 rounded-xl"
                 rows={1}
-                onKeyDown={(e)=>{
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleComment();
-                    setComment('');
-                  }
-                }}
               ></textarea>
 
               <div className="flex gap-2 justify-between items-center px-3 pb-2">
