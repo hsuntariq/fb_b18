@@ -20,7 +20,7 @@ export const addPost = async (req, res) => {
 };
 
 export const getPosts = async (req, res) => {
-  const allPosts = await Posts.find().sort({ createdAt: -1 });
+  const allPosts = await Posts.find().populate("user_id", "f_name l_name").sort({ createdAt: -1 });
   res.send(allPosts);
 };
 
@@ -40,7 +40,7 @@ export const makeReaction = async (req, res) => {
 
     if (reactionIndex === -1) {
       // If reaction doesn't exist, add it
-      findPost.likes.push({ type: emoji, id: user_id });
+      findPost.likes.push({ type: emoji, id: user_id, post_id });
       await findPost.save();
     } else {
       // If reaction exists, update it directly in the array
@@ -91,7 +91,7 @@ export const addComment = async (req, res) => {
     throw new Error('Post Not Found')
   }
 
-  findPost.comments.push({ user: req.user, comment })
+  findPost.comments.push({ user: req.user, comment, post_id })
 
   await findPost.save()
   res.send(findPost)

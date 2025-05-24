@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { logUser, regUserService, verifyOTP } from "./userService";
+import { getAllUsers, getMyInfo, logUser, regUserService, verifyOTP } from "./userService";
 
 const initialState = {
   user: JSON.parse(localStorage.getItem("user")) || null,
@@ -7,6 +7,8 @@ const initialState = {
   userLoading: false,
   userSuccess: false,
   userMessage: "",
+  allUsers: [],
+  myInfo: {}
 };
 
 export const regUserSlice = createAsyncThunk(
@@ -41,17 +43,47 @@ export const verifyUserOTP = createAsyncThunk(
     }
   }
 );
+export const getMyData = createAsyncThunk(
+  "my-data",
+  async (user_id, thunkAPI) => {
+    try {
+      return await getMyInfo(user_id);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.error);
+    }
+  }
+);
+
+
+export const getAllUsersData = createAsyncThunk('get-all-users', async (_, thunkAPI) => {
+  try {
+    return await getAllUsers()
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.error)
+  }
+})
 
 export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+
+
     userReset: (state) => {
       state.userLoading = false;
       state.userError = false;
       state.userMessage = "";
       state.userSuccess = false;
     },
+    logoutUser: (state) => {
+      state.user = null,
+        state.userError = false,
+        state.userLoading = false,
+        state.userMessage = ""
+      localStorage.removeItem('user')  // Remove users from Local-Store /Changes
+    }
+
+
   },
   extraReducers: (builder) => {
     builder
@@ -68,6 +100,19 @@ export const authSlice = createSlice({
         state.userLoading = false;
         state.userSuccess = true;
         state.user = action.payload;
+      })
+      .addCase(getAllUsersData.pending, (state, action) => {
+        state.userLoading = true;
+      })
+      .addCase(getAllUsersData.rejected, (state, action) => {
+        state.userLoading = false;
+        state.userMessage = action.payload;
+        state.userError = true;
+      })
+      .addCase(getAllUsersData.fulfilled, (state, action) => {
+        state.userLoading = false;
+        state.userSuccess = true;
+        state.allUsers = action.payload;
       })
 
       .addCase(loginUser.pending, (state, action) => {
@@ -97,7 +142,20 @@ export const authSlice = createSlice({
         state.userLoading = false;
         state.userSuccess = true;
         state.user = action.payload;
-      });
+      })
+      .addCase(getMyData.pending, (state, action) => {
+        state.userLoading = true
+      })
+      .addCase(getMyData.rejected, (state, action) => {
+        state.userLoading = false
+        state.userError = true
+        state.userMessage = action.payload
+      })
+      .addCase(getMyData.fulfilled, (state, action) => {
+        state.userLoading = false
+        state.userSuccess = true
+        state.myInfo = action.payload
+      })
   },
 });
 

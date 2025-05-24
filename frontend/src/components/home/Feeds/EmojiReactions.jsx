@@ -30,36 +30,63 @@ export default function EmojiReactions({ post_id, likes }) {
     setSelected(reaction);
   };
 
-  const isPresent = likes?.find((item) => item?.id === user?._id);
-
+  const isPresent = likes?.find((item) => item?.id == user?._id);
   const selectedEmoji = emojis.find(e => e.name === selected?.name);
 
-  const getEmojiImage = (name) => {
-    const emoji = emojis.find(e => e.name === name);
-    if (!emoji) return null;
-    const urlBase = "https://fonts.gstatic.com/s/e/notoemoji/latest";
-    return (
-      <picture>
-        <source srcSet={`${urlBase}/${emoji.code}/512.webp`} type="image/webp" />
-        <img src={`${urlBase}/${emoji.code}/512.gif`} alt={emoji.name} width="24" height="24" />
-      </picture>
-    );
-  };
-
   return (
-    <div className="relative w-full inline-block text-center">
+    <div className="relative justify-center inline-block text-center">
       <div
-        className={`flex gap-2 justify-center items-center w-full cursor-pointer p-1 rounded-full `}
+        className="flex gap-2 justify-center items-center  cursor-pointer p-1 rounded-full"
         onMouseEnter={() => setShowBar(true)}
         onMouseLeave={() => !selected && setShowBar(false)}
       >
-        {isPresent ? (
-          <span className="flex items-center gap-2">
-            {getEmojiImage(isPresent.type)}
-            <h6 className="font-semibold text-sm capitalize text-gray-700">{isPresent.type}</h6>
-          </span>
+        {selectedEmoji || isPresent ? (
+          <>
+            {/* Show selected emoji or user's existing reaction */}
+            {selectedEmoji ? (
+              <span
+                className="noto-emoji-animated text-[15px] font-[500]"
+                style={{
+                  fontFamily: "'Noto Color Emoji Compat', sans-serif",
+                  display: 'flex'
+                }}
+                data-code={selectedEmoji.code}
+              >
+                {selectedEmoji.icon}
+                <div className="text-gray-500 text-md">
+                  <span className={`${selectedEmoji.color} capitalize`}>
+                    {selectedEmoji.name}
+                  </span>
+                </div>
+              </span>
+            ) : (
+              <>
+                {/* Show the user's existing reaction from the database */}
+                {isPresent && (
+                  <>
+                    <span
+                      className="noto-emoji-animated text-[15px] font-[500]"
+                      style={{
+                        fontFamily: "'Noto Color Emoji Compat', sans-serif",
+                        display: 'flex'
+                      }}
+                      data-code={emojis.find(e => e.name === isPresent.type)?.code}
+                    >
+                      {emojis.find(e => e.name === isPresent.type)?.icon}
+                      <div className="text-gray-500 text-md">
+                        <span className={`${emojis.find(e => e.name === isPresent.type)?.color} capitalize`}>
+                          {isPresent.type}
+                        </span>
+                      </div>
+                    </span>
+                  </>
+                )}
+              </>
+            )}
+          </>
         ) : (
           <>
+            {/* Default state - show thumbs up and "Like" when no reaction is selected */}
             <FiThumbsUp className="text-gray-600" />
             <h6 className="font-semibold text-sm text-gray-600">Like</h6>
           </>
@@ -95,8 +122,7 @@ export default function EmojiReactions({ post_id, likes }) {
                   setShowBar(false);
                   handleReaction(emoji);
                 }}
-                className={`cursor-pointer text-2xl p-1 rounded-full transition-all duration-200 ${hoveredEmoji === emoji.name ? "bg-gray-200" : ""
-                  }`}
+                className={`cursor-pointer text-2xl p-1 rounded-full transition-all duration-200 ${hoveredEmoji === emoji.name ? "bg-gray-200" : ""}`}
               >
                 <span
                   className="noto-emoji-animated"

@@ -135,10 +135,13 @@ const GetPosts = ({
         </div>
         <hr className="bg-gray-300 h-[1px] border border-0" />
         <div className="flex justify-between items-center p-3">
+          <div className="flex gap-2  items-center w-full">
           <EmojiReactions post_id={_id} likes={likes} />
+          </div>
+          <div className="flex gap-2  items-center w-full">
           <CommentModal />
-
-          <div className="flex gap-2 justify-center items-center w-full">
+          </div>
+          <div className="flex gap-2 items-center w-full">
             <PiShareFat className="text-gray-600" />
             <h6 className="font-semibold text-sm text-gray-600">Share</h6>
           </div>

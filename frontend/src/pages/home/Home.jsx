@@ -19,7 +19,7 @@ const Home = () => {
           <MainContent />
         </div>
         {/* ads section */}
-        <div className="xl:col-span-3 md:block hidden lg:col-span-4">
+        <div className="xl:col-span-3 md:block hidden md:col-span-4">
           <AdsSection />
         </div>
       </div>
