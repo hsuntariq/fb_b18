@@ -1,22 +1,17 @@
 import React, { useState } from "react";
-import { CiSearch } from "react-icons/ci";
-import { FaSearch, FaSortDown, FaUser } from "react-icons/fa";
-import {
-  IoIosArrowRoundBack,
-  IoIosSearch,
-  IoMdArrowRoundBack,
-} from "react-icons/io";
+import { FaSortDown, FaUser } from "react-icons/fa";
+import { IoIosArrowRoundBack, IoIosSearch } from "react-icons/io";
 import { navbar_data } from "./data/navbarData";
 import { BsBellFill, BsFillGrid3X3GapFill, BsMessenger } from "react-icons/bs";
 import Menu from "./rightside/Menu";
 import AccountSettings from "./AccountSettings";
 import { Link } from "react-router-dom";
-// import Messenger from "./Messenger";
 
 const Navbar = () => {
   const [focused, setFocused] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
   const [showMessenger, setShowMessenger] = useState(false);
+  const [account, setAccount] = useState(false);
   return (
     <>
       <nav className="flex  justify-between items-center relative">
@@ -101,9 +96,15 @@ const Navbar = () => {
             <BsBellFill size={22} className="text-gray-800" />
           </div>
           {/* user */}
-          <div className="h-[40px] group relative rounded-full hover:bg-gray-300 cursor-pointer bg-gray-200  w-[40px] flex justify-center items-center">
-            <FaUser size={22} className="text-gray-500" />
-            <div className="bg-gray-200 absolute rounded-full bottom-0 right-0 flex justify-center border border-white border-2  items-center h-[15px] w-[15px]">
+
+          <div
+            onClick={() => setAccount(!account)}
+            className={`h-[40px] group relative rounded-full hover:bg-gray-300 cursor-pointer   w-[40px] flex justify-center items-center bg-gray-200`}
+          >
+            <FaUser size={22} className={` text-gray-500`} />
+            <div
+              className={`bg-gray-200 absolute rounded-full bottom-0 right-0 flex justify-center border-white border-2  items-center h-[15px] w-[15px]`}
+            >
               <FaSortDown
                 size={10}
                 className="text-black -translate-y-1/4 leading-none"
@@ -112,11 +113,10 @@ const Navbar = () => {
             <div className="absolute delay-150 mt-1 group-hover:opacity-100 bg-black text-white rounded-xl px-3 py-1 shadow-xl transition-all duration-200 opacity-0  left-1/2 top-full -translate-x-1/2 text-sm">
               Account
             </div>
-            {/* <AccountSettings /> */}
           </div>
         </div>
+        {account && <AccountSettings />}
 
-        {/* <Messenger /> */}
         {showMessenger && <Messenger />}
       </nav>
     </>

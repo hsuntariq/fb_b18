@@ -1,5 +1,5 @@
 import React from "react";
-import Navbar from "../component/home/Navbar";
+// import Navbar from "../component/home/Navbar";
 import { IoCameraSharp, IoMenu } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import {
@@ -11,6 +11,7 @@ import { BiDotsHorizontalRounded } from "react-icons/bi";
 import { PiLineSegmentsThin } from "react-icons/pi";
 import { IoIosSettings } from "react-icons/io";
 import { BsGridFill } from "react-icons/bs";
+import Navbar from "../components/home/Navbar";
 const Profile = () => {
   return (
     <>
