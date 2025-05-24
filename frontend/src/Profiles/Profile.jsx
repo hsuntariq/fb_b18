@@ -1,3 +1,5 @@
+import React from "react";
+// import Navbar from "../component/home/Navbar";
 import React, { useEffect } from "react";
 import { IoCameraSharp, IoMenu } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
@@ -9,6 +11,8 @@ import {
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import { PiLineSegmentsThin } from "react-icons/pi";
 import { IoIosSettings } from "react-icons/io";
+import { BsGridFill } from "react-icons/bs";
+import Navbar from "../components/home/Navbar";
 import { BsChat, BsChatDots, BsGridFill } from "react-icons/bs";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux'
