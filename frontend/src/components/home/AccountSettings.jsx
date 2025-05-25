@@ -10,6 +10,8 @@ import { RiInboxArchiveFill, RiLogoutBoxFill } from "react-icons/ri";
 import { TbLockHeart, TbMessageReportFilled, TbWorld } from "react-icons/tb";
 import { ImUserCheck } from "react-icons/im";
 import { SiGocd } from "react-icons/si";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const AccountSetting = () => {
   const [setting, setSetting] = useState(false);
@@ -20,13 +22,13 @@ const AccountSetting = () => {
   const [darkMode, setDarkMode] = useState("off");
   const [compact, setCompact] = useState("off");
   const [shortcut, setShortcut] = useState("off");
+  const { user } = useSelector((state) => state.auth)
   return (
     <>
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`bg-white p-2 shadow-2xl shadow-gray-700 z-10 w-[350px] rounded-lg translate-y-4 absolute translate-x-full top-10 right-100  ${
-          setting ? "hidden" : "block"
-        } ${support ? "hidden" : "block"}
+        className={`bg-white p-2 shadow-2xl shadow-gray-700 z-10 w-[350px] rounded-lg translate-y-4 absolute translate-x-full top-10 right-100  ${setting ? "hidden" : "block"
+          } ${support ? "hidden" : "block"}
         ${display ? "hidden" : "block"}`}
       >
         <div className="p-2  rounded-md shadow-md shadow-gray-300  w-full">
@@ -34,7 +36,11 @@ const AccountSetting = () => {
             <div className="bg-gray-200 flex items-center justify-center rounded-full h-[35px] w-[35px] border-2 border-gray-300">
               <FaUser size={22} className="text-gray-700" />
             </div>
-            <h2>Muhammad Asim</h2>
+            <Link to={`/profile/${user?._id}`}>
+              <h2>
+                {user?.f_name} {user?.l_name}
+              </h2>
+            </Link>
           </div>
           <hr className="hr " />
           <div className="rounded-lg bg-gray-200 flex items-center justify-center p-2 hover:bg-gray-300">
@@ -119,9 +125,8 @@ const AccountSetting = () => {
       {/*  Settings & privacy */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`bg-white p-2 shadow-2xl shadow-gray-700   rounded-lg translate-y-4 w-[350px]  absolute translate-x-full top-10 right-100 ${
-          setting ? "block" : "hidden"
-        }  `}
+        className={`bg-white p-2 shadow-2xl shadow-gray-700   rounded-lg translate-y-4 w-[350px]  absolute translate-x-full top-10 right-100 ${setting ? "block" : "hidden"
+          }  `}
       >
         <div className="flex items-center justify-start gap-4 mx-auto my-3 w-[400px]">
           <div
@@ -135,7 +140,7 @@ const AccountSetting = () => {
             Settings & privacy
           </p>
         </div>
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col bg-white z-50 items-center gap-2">
           <div className="flex items-center justify-between w-full hover:bg-gray-200/50 rounded-md p-2 ">
             <div className="bg-gray-200 flex items-center justify-center rounded-full h-[35px] w-[35px] ">
               <IoIosSettings size={25} className="text-gray-700" />
@@ -177,9 +182,8 @@ const AccountSetting = () => {
       {/*  Help & support*/}
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`bg-white p-2 shadow-2xl shadow-gray-700  w-[350px] rounded-lg translate-y-4 transition-all duration-100 absolute translate-x-full top-10 right-100  ${
-          support ? "block " : "hidden"
-        }`}
+        className={`bg-white p-2 shadow-2xl shadow-gray-700  w-[350px] rounded-lg translate-y-4 transition-all duration-100 absolute translate-x-full top-10 right-100  ${support ? "block " : "hidden"
+          }`}
       >
         <div className="flex items-center justify-start gap-4 mx-auto my-3 w-full">
           <div
@@ -222,9 +226,8 @@ const AccountSetting = () => {
       {/*   Display & accessibility */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`bg-white p-2 shadow-2xl shadow-gray-700  w-[350px] rounded-lg translate-y-4 absolute translate-x-full top-10 right-100 ${
-          display ? "block" : "hidden"
-        } ${keyboard ? "hidden" : "block"} `}
+        className={`bg-white p-2 shadow-2xl shadow-gray-700  w-[350px] rounded-lg translate-y-4 absolute translate-x-full top-10 right-100 ${display ? "block" : "hidden"
+          } ${keyboard ? "hidden" : "block"} `}
       >
         <div className="flex items-center justify-start gap-4 mx-auto my-3 w-full">
           <div
@@ -254,9 +257,8 @@ const AccountSetting = () => {
           <div className="flex flex-col gap-5 items-center w-full  rounded-md">
             {/* Option Off */}
             <div
-              className={`flex items-center justify-between w-full p-3 rounded-md cursor-pointer ${
-                darkMode === "off" ? "bg-gray-200" : ""
-              }`}
+              className={`flex items-center justify-between w-full p-3 rounded-md cursor-pointer ${darkMode === "off" ? "bg-gray-200" : ""
+                }`}
               onClick={() => setDarkMode("off")}
             >
               <p className="font-bold ps-10">Off</p>
@@ -272,9 +274,8 @@ const AccountSetting = () => {
 
             {/* Option On */}
             <div
-              className={`flex items-center justify-between w-full p-3 rounded-md cursor-pointer ${
-                darkMode === "on" ? "bg-gray-200" : ""
-              }`}
+              className={`flex items-center justify-between w-full p-3 rounded-md cursor-pointer ${darkMode === "on" ? "bg-gray-200" : ""
+                }`}
               onClick={() => setDarkMode("on")}
             >
               <p className="font-bold ps-10">On</p>
@@ -316,9 +317,8 @@ const AccountSetting = () => {
         <div className="flex flex-col gap-5 items-center w-full  rounded-md">
           {/* Option Off */}
           <div
-            className={`flex items-center justify-between w-full p-3 rounded-md cursor-pointer ${
-              compact === "off" ? "bg-gray-200" : ""
-            }`}
+            className={`flex items-center justify-between w-full p-3 rounded-md cursor-pointer ${compact === "off" ? "bg-gray-200" : ""
+              }`}
             onClick={() => setCompact("off")}
           >
             <p className="font-bold ps-10">Off</p>
@@ -334,9 +334,8 @@ const AccountSetting = () => {
 
           {/* Option On */}
           <div
-            className={`flex items-center justify-between w-full p-3 rounded-md cursor-pointer ${
-              compact === "on" ? "bg-gray-200" : ""
-            }`}
+            className={`flex items-center justify-between w-full p-3 rounded-md cursor-pointer ${compact === "on" ? "bg-gray-200" : ""
+              }`}
             onClick={() => setCompact("on")}
           >
             <p className="font-bold ps-10">On</p>
@@ -366,9 +365,8 @@ const AccountSetting = () => {
 
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`bg-white p-2 shadow-2xl shadow-gray-700 w-[350px]  rounded-lg translate-y-4 absolute translate-x-full top-10 right-100 ${
-          keyboard ? "block" : "hidden"
-        } `}
+        className={`bg-white p-2 shadow-2xl shadow-gray-700 w-[350px]  rounded-lg translate-y-4 absolute translate-x-full top-10 right-100 ${keyboard ? "block" : "hidden"
+          } `}
       >
         <div className="flex items-center justify-start gap-4 mx-auto my-3 w-full ">
           <div
@@ -402,9 +400,8 @@ const AccountSetting = () => {
         <div className="flex flex-col gap-5 items-center w-full py-2 rounded-md">
           {/* Option Off */}
           <div
-            className={`flex items-center justify-between w-full py-2 rounded-md cursor-pointer ${
-              shortcut === "off" ? "bg-gray-200" : ""
-            }`}
+            className={`flex items-center justify-between w-full py-2 rounded-md cursor-pointer ${shortcut === "off" ? "bg-gray-200" : ""
+              }`}
             onClick={() => setShortcut("off")}
           >
             <p className="font-bold ps-10">Off</p>
@@ -420,9 +417,8 @@ const AccountSetting = () => {
 
           {/* Option On */}
           <div
-            className={`flex items-center justify-between w-full py-2 rounded-md cursor-pointer ${
-              shortcut === "on" ? "bg-gray-200" : ""
-            }`}
+            className={`flex items-center justify-between w-full py-2 rounded-md cursor-pointer ${shortcut === "on" ? "bg-gray-200" : ""
+              }`}
             onClick={() => setShortcut("on")}
           >
             <p className="font-bold ps-10">On</p>

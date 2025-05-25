@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     Drawer,
@@ -16,21 +16,72 @@ import {
     FaImage,
     FaGift
 } from 'react-icons/fa';
+import { BsChatDots, BsSend } from 'react-icons/bs';
 
-export default function MessagePanel() {
+import io from 'socket.io-client'
+const socket = io.connect('http://localhost:5174');
+
+
+
+
+export default function MessagePanel({ receiver_id, username }) {
     const [open, setOpen] = useState(false);
-    const [isTyping, setIsTyping] = useState(false);
-
+    const [message, setMessage] = useState('');
+    const [sentMessages, setSentMessages] = useState([])
+    const [receivedMessages, setReceivedMessage] = useState([])
     const toggleDrawer = (newOpen) => () => setOpen(newOpen);
 
-    const handleInputChange = (e) => {
-        setIsTyping(e.target.value.length > 0);
+
+
+    const handleMessage = () => {
+        if (!message.trim()) return; // avoid empty messages
+
+        const newMsg = {
+            sent: true,
+            time: Date.now(),
+            message
+        };
+
+        socket.emit('sent_message', newMsg);
+
+        setSentMessages(prev => [...prev, newMsg]);
+        setMessage(''); // clear input after sending
     };
+
+
+    useEffect(() => {
+        socket.on('received_message', (data) => {
+            setReceivedMessage((prevValue) => [...prevValue, {
+                sent: false,
+                time: Date.now(),
+                message: data.message
+            }])
+        });
+
+        return () => socket.off('received_message'); // clean up listener
+    }, []);
+
+
+
+    let allMessages = [...sentMessages, ...receivedMessages].sort((a, b) => {
+        return a.time - b.time
+    })
+
+
+
+
+
+
+
+
 
     return (
         <Box sx={{ backgroundColor: 'transparent' }}> {/* Main parent with transparent background */}
-            <Button variant="contained" onClick={toggleDrawer(true)}>Open Chat</Button>
-
+            <button onClick={toggleDrawer(true)} className="bg-gray-200 cursor-pointer rounded-md px-4 py-2 text-black font-semibold whitespace-nowrap flex items-center gap-2">
+                <BsChatDots />
+                {" "}
+                Message
+            </button>
             <Drawer
                 anchor="right"
                 open={open}
@@ -51,15 +102,16 @@ export default function MessagePanel() {
                 }}
             >
                 {/* Header */}
+
                 <Box sx={{ display: 'flex', alignItems: 'center', p: 1, bgcolor: 'rgba(240, 242, 245, 0.9)' }}>
                     <Avatar
                         src="https://via.placeholder.com/40"
-                        alt="Linawati Tan"
+                        alt={username}
                         sx={{ width: 40, height: 40, mr: 1 }}
                     />
                     <Box sx={{ flexGrow: 1 }}>
                         <Typography variant="subtitle1" fontWeight="bold" fontSize="16px">
-                            Linawati Tan
+                            {username}
                         </Typography>
                     </Box>
                     <IconButton onClick={toggleDrawer(false)} sx={{ color: 'purple', p: 0.5 }}>
@@ -71,20 +123,31 @@ export default function MessagePanel() {
 
                 {/* Encrypted Info */}
                 <Box sx={{ textAlign: 'center', px: 2, py: 0.5, bgcolor: 'rgba(228, 230, 235, 0.9)' }}>
-                    <Typography variant="body2" sx={{ fontSize: '12px', color: '#606770' }}>
-                        🔒 <strong>End-to-end encrypted</strong><br />
-                        Messages and calls are secured with end-to-end encryption. Only people in this chat can read, listen to or share them.{' '}
-                        <Typography component="span" sx={{ color: '#1b74e4', cursor: 'pointer' }}>
-                            Learn more
-                        </Typography>
-                    </Typography>
+
                 </Box>
 
                 <Divider />
 
                 {/* Message Area */}
                 <Box sx={{ flexGrow: 1, p: 2, bgcolor: 'transparent', overflowY: 'auto' }}>
-                    {/* Messages would go here */}
+                    {allMessages?.map((item, index) => {
+                        return (
+                            <>
+                                {item.sent ? (
+                                    <>
+                                        <p className="bg-green-600 ms-auto my-2 text-white rounded-full w-max px-3 py-2">
+                                            {item?.message}
+                                        </p>
+                                    </>
+                                ) : (<>
+                                    <p className="bg-gray-300 py-2 text-black rounded-full w-max px-3">
+                                        {item?.message}
+                                    </p>
+                                </>)}
+                            </>
+                        )
+
+                    })}
                 </Box>
 
                 {/* Input Area */}
@@ -95,9 +158,9 @@ export default function MessagePanel() {
                             display: 'flex',
                             gap: 1,
                             transition: 'opacity 0.3s ease, transform 0.3s ease, width 0.3s ease',
-                            opacity: isTyping ? 0 : 1,
-                            transform: isTyping ? 'translateX(-20px)' : 'translateX(0)',
-                            width: isTyping ? '0px' : 'auto',
+                            opacity: message ? 0 : 1,
+                            transform: message ? 'translateX(-20px)' : 'translateX(0)',
+                            width: message ? '0px' : 'auto',
                             overflow: 'hidden',
                         }}
                     >
@@ -113,11 +176,12 @@ export default function MessagePanel() {
                         variant="outlined"
                         size="small"
                         placeholder="Aa"
-                        onChange={handleInputChange}
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
                         sx={{
                             bgcolor: '#fff',
                             borderRadius: '20px',
-                            width: isTyping ? '100%' : 'auto',
+                            width: message ? '100%' : 'auto',
                             flexGrow: 1,
                             transition: 'width 0.3s ease, flex-grow 0.3s ease',
                             '& .MuiOutlinedInput-root': {
@@ -128,6 +192,7 @@ export default function MessagePanel() {
                             },
                         }}
                     />
+                    <BsSend className='cursor-pointer' onClick={handleMessage} />
                 </Box>
             </Drawer>
         </Box>

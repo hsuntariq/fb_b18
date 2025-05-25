@@ -1,4 +1,3 @@
-import React from "react";
 // import Navbar from "../component/home/Navbar";
 import React, { useEffect } from "react";
 import { IoCameraSharp, IoMenu } from "react-icons/io5";
@@ -11,7 +10,6 @@ import {
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import { PiLineSegmentsThin } from "react-icons/pi";
 import { IoIosSettings } from "react-icons/io";
-import { BsGridFill } from "react-icons/bs";
 import Navbar from "../components/home/Navbar";
 import { BsChat, BsChatDots, BsGridFill } from "react-icons/bs";
 import { useParams } from "react-router-dom";
@@ -67,12 +65,8 @@ const Profile = () => {
                   {" "}
                   + Add to story
                 </button>
-                <button className="bg-gray-200 rounded-md px-4 py-2 text-black font-semibold whitespace-nowrap flex items-center gap-2">
-                  <BsChatDots />
-                  {" "}
-                  Message
-                </button>
-                <MessagePanel />
+
+                <MessagePanel receiver_id={myInfo?._id} username={`${myInfo?.f_name} ${myInfo?.l_name}`} />
                 <button className="bg-gray-200  rounded-md px-4 py-2 whitespace-nowrap ">
                   <MdEdit className="inline" /> Edit profile
                 </button>
@@ -115,15 +109,13 @@ const Profile = () => {
           <div className="rounded-md p-5 shadow bg-white">
             <p className="font-bold text-xl  mb-4">Intro</p>
             <div className="flex flex-col gap-4">
-              <button className="w-full rounded-md bg-gray-200 py-2 ">
-                Add Bio
-              </button>
-              <button className="w-full rounded-md bg-gray-200 py-2 ">
-                Edit details
-              </button>
-              <button className="w-full rounded-md bg-gray-200 py-2 ">
-                Add Features
-              </button>
+              {['Add Bio', 'Edit Details', 'Add Features'].map((item, index) => {
+                return <button className="w-full rounded-md bg-gray-200 py-2 ">
+                  {item}
+                </button>
+              })}
+
+
             </div>
           </div>
           <div className="rounded-md p-5 shadow bg-white flex items-center justify-between">
