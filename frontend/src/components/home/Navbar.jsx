@@ -15,6 +15,7 @@ const Navbar = () => {
   return (
     <>
       <nav className="flex  justify-between items-center relative">
+
         <div
           className={`flex transition-all p-3 duration-300 items-center gap-2 ${focused && "shadow-2xl shadow-gray-400 p-3 rounded-md"
             } `}
@@ -29,6 +30,7 @@ const Navbar = () => {
                 : "opacity-0  translate-x-15"
                 }`}
             />
+
           </div>
           <Link to='/'>
             <img

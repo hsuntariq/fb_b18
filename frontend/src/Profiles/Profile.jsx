@@ -16,7 +16,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux'
 import { getMyData } from "../features/users/userSlice";
 import MessagePanel from "../components/home/chat/MessagePanel";
-const Profile = () => {
+const Profile = ({ show, setShow }) => {
 
   const { myInfo } = useSelector((state) => state.auth)
   const { id } = useParams()
@@ -66,7 +66,7 @@ const Profile = () => {
                   + Add to story
                 </button>
 
-                <MessagePanel receiver_id={myInfo?._id} username={`${myInfo?.f_name} ${myInfo?.l_name}`} />
+                <MessagePanel setShow={setShow} show={show} receiver_id={myInfo?._id} username={`${myInfo?.f_name} ${myInfo?.l_name}`} />
                 <button className="bg-gray-200  rounded-md px-4 py-2 whitespace-nowrap ">
                   <MdEdit className="inline" /> Edit profile
                 </button>

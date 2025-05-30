@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./globals.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/auth/Login";
@@ -15,11 +15,17 @@ import ClimateCenter from "./pages/home/ClimateCenter";
 import FundraisersPage from "./components/home/SidebarComponents/Fundraisers/FundraisersPage";
 import AllStories from "./pages/Story/AllStories";
 import VideoPage from "./pages/videos/VideoPage";
+import ChatContainer from "./components/home/chat/ChatContainer";
 const App = () => {
+  const [show, setShow] = useState(false)
   return (
     <>
       <Router>
         <Toaster />
+        {show && <ChatContainer />}
+
+
+
         <Routes>
           {/* auth routes */}
           <Route path="/" element={<Login />} />
@@ -31,7 +37,7 @@ const App = () => {
           <Route path="/friends" element={<Friends />} />
           <Route path="/feeds" element={<Feeds />}></Route>
           <Route path="/climatecenter" element={<ClimateCenter />} />
-          <Route path="/profile/:id" element={<Profile />} />
+          <Route path="/profile/:id" element={<Profile setShow={setShow} show={show} />} />
           <Route path="/fundraiser" element={<FundraisersPage />} />
           <Route path="/stories" element={<AllStories />} />
 

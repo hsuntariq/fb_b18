@@ -6,8 +6,7 @@ import {
     Typography,
     Divider,
     TextField,
-    IconButton,
-    Button
+    IconButton
 } from '@mui/material';
 import {
     FaSmile,
@@ -17,67 +16,85 @@ import {
     FaGift
 } from 'react-icons/fa';
 import { BsChatDots, BsSend } from 'react-icons/bs';
-
 import io from 'socket.io-client'
+import { useSelector } from 'react-redux';
+
 const socket = io.connect('http://localhost:5174');
 
-
-
-
-export default function MessagePanel({ receiver_id, username }) {
+export default function MessagePanel({ receiver_id, username, show, setShow }) {
     const [open, setOpen] = useState(false);
     const [message, setMessage] = useState('');
-    const [sentMessages, setSentMessages] = useState([])
-    const [receivedMessages, setReceivedMessage] = useState([])
+    const [messages, setMessages] = useState([]); // Combined messages storage
     const toggleDrawer = (newOpen) => () => setOpen(newOpen);
 
+    const { user } = useSelector((state) => state.auth)
 
+    // Load existing messages when drawer opens or receiver changes
+    useEffect(() => {
+        if (open) {
+            // Here you would typically fetch existing messages from your API
+            // For now, we'll just initialize with empty array
+            // setMessages([]);
+        }
+    }, [open, receiver_id]);
 
     const handleMessage = () => {
-        if (!message.trim()) return; // avoid empty messages
+        if (!message.trim()) return;
 
         const newMsg = {
             sent: true,
             time: Date.now(),
-            message
+            message,
+            sender_id: user?._id,
+            receiver_id
         };
 
         socket.emit('sent_message', newMsg);
 
-        setSentMessages(prev => [...prev, newMsg]);
-        setMessage(''); // clear input after sending
+        // Add to local messages immediately for optimistic UI
+        setMessages(prev => [...prev, newMsg]);
+        setMessage('');
     };
 
 
+
     useEffect(() => {
-        socket.on('received_message', (data) => {
-            setReceivedMessage((prevValue) => [...prevValue, {
-                sent: false,
-                time: Date.now(),
-                message: data.message
-            }])
-        });
+        const handleReceivedMessage = (data) => {
+            // Only add if the message is for this chat
+            if ((data.receiver_id === user?._id && data.sender_id === receiver_id) ||
+                (data.sender_id === user?._id && data.receiver_id === receiver_id)) {
+                setMessages(prev => [...prev, {
+                    ...data,
+                    sent: data.sender_id === user?._id
+                }]);
 
-        return () => socket.off('received_message'); // clean up listener
-    }, []);
+            }
+        };
 
+        socket.on('received_message', () => {
+            setShow(true)
 
+        })
 
-    let allMessages = [...sentMessages, ...receivedMessages].sort((a, b) => {
-        return a.time - b.time
-    })
+        socket.on('received_message', handleReceivedMessage);
 
+        return () => {
+            socket.off('received_message', handleReceivedMessage);
+        };
+    }, [user?._id, receiver_id]);
 
-
-
-
-
-
-
+    // Filter messages to only show those between current user and selected receiver
+    const filteredMessages = messages.filter(msg =>
+        (msg.sender_id === user?._id && msg.receiver_id === receiver_id) ||
+        (msg.sender_id === receiver_id && msg.receiver_id === user?._id)
+    ).sort((a, b) => a.time - b.time);
 
     return (
-        <Box sx={{ backgroundColor: 'transparent' }}> {/* Main parent with transparent background */}
-            <button onClick={toggleDrawer(true)} className="bg-gray-200 cursor-pointer rounded-md px-4 py-2 text-black font-semibold whitespace-nowrap flex items-center gap-2">
+        <Box sx={{ backgroundColor: 'transparent' }}>
+            <button
+                onClick={toggleDrawer(true)}
+                className="bg-gray-200 cursor-pointer rounded-md px-4 py-2 text-black font-semibold whitespace-nowrap flex items-center gap-2"
+            >
                 <BsChatDots />
                 {" "}
                 Message
@@ -102,7 +119,6 @@ export default function MessagePanel({ receiver_id, username }) {
                 }}
             >
                 {/* Header */}
-
                 <Box sx={{ display: 'flex', alignItems: 'center', p: 1, bgcolor: 'rgba(240, 242, 245, 0.9)' }}>
                     <Avatar
                         src="https://via.placeholder.com/40"
@@ -123,35 +139,46 @@ export default function MessagePanel({ receiver_id, username }) {
 
                 {/* Encrypted Info */}
                 <Box sx={{ textAlign: 'center', px: 2, py: 0.5, bgcolor: 'rgba(228, 230, 235, 0.9)' }}>
-
+                    {/* You can add encryption info here if needed */}
                 </Box>
 
                 <Divider />
 
                 {/* Message Area */}
-                <Box sx={{ flexGrow: 1, p: 2, bgcolor: 'transparent', overflowY: 'auto' }}>
-                    {allMessages?.map((item, index) => {
-                        return (
-                            <>
-                                {item.sent ? (
-                                    <>
-                                        <p className="bg-green-600 ms-auto my-2 text-white rounded-full w-max px-3 py-2">
-                                            {item?.message}
-                                        </p>
-                                    </>
-                                ) : (<>
-                                    <p className="bg-gray-300 py-2 text-black rounded-full w-max px-3">
-                                        {item?.message}
-                                    </p>
-                                </>)}
-                            </>
-                        )
-
-                    })}
+                <Box sx={{
+                    flexGrow: 1,
+                    p: 2,
+                    bgcolor: 'transparent',
+                    overflowY: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 1
+                }}>
+                    {filteredMessages.map((msg, index) => (
+                        <Box
+                            key={index}
+                            sx={{
+                                alignSelf: msg.sent ? 'flex-end' : 'flex-start',
+                                maxWidth: '80%',
+                                p: 1.5,
+                                borderRadius: msg.sent ? '18px 18px 0 18px' : '18px 18px 18px 0',
+                                bgcolor: msg.sent ? '#1b74e4' : '#e4e6eb',
+                                color: msg.sent ? 'white' : 'black',
+                            }}
+                        >
+                            <Typography variant="body2">{msg.message}</Typography>
+                        </Box>
+                    ))}
                 </Box>
 
                 {/* Input Area */}
-                <Box sx={{ p: 1, bgcolor: 'rgba(240, 242, 245, 0.9)', display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box sx={{
+                    p: 1,
+                    bgcolor: 'rgba(240, 242, 245, 0.9)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1
+                }}>
                     {/* Attachments and Icons */}
                     <Box
                         sx={{
@@ -178,6 +205,7 @@ export default function MessagePanel({ receiver_id, username }) {
                         placeholder="Aa"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleMessage()}
                         sx={{
                             bgcolor: '#fff',
                             borderRadius: '20px',
@@ -192,7 +220,13 @@ export default function MessagePanel({ receiver_id, username }) {
                             },
                         }}
                     />
-                    <BsSend className='cursor-pointer' onClick={handleMessage} />
+                    <IconButton
+                        onClick={handleMessage}
+                        disabled={!message.trim()}
+                        sx={{ color: '#1b74e4' }}
+                    >
+                        <BsSend />
+                    </IconButton>
                 </Box>
             </Drawer>
         </Box>

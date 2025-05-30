@@ -105,7 +105,7 @@ const Friends = () => {
               </>
             ) : (
               <>
-                {allUsers?.slice(0, 5).map((item, index) => {
+                {allUsers?.map((item, index) => {
                   return <PeopleKNow {...item} key={index} />
                 })}
 
