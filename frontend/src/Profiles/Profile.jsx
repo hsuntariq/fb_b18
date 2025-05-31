@@ -1,5 +1,5 @@
 // import Navbar from "../component/home/Navbar";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { IoCameraSharp, IoMenu } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import {
@@ -16,13 +16,37 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux'
 import { getMyData } from "../features/users/userSlice";
 import MessagePanel from "../components/home/chat/MessagePanel";
+import { Toast } from "../video_call/ToastVideo";
+const socket = io.connect('http://localhost:5174');
+import io from 'socket.io-client'
+
 const Profile = ({ show, setShow }) => {
 
   const { myInfo } = useSelector((state) => state.auth)
   const { id } = useParams()
+  const { user } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(getMyData(id))
+  }, [])
+
+  const [call, setCall] = useState(false)
+  const [caller, setCaller] = useState(null)
+
+
+
+
+
+  useEffect(() => {
+    socket.on('received_call', (data) => {
+      console.log(data)
+      if (data.receiver_id == user?._id) {
+        setCall(true)
+        setCaller(data?.sender_name)
+        let audio = new Audio('/ringing.mp3')
+        audio.play()
+      }
+    })
   }, [])
 
 
@@ -30,6 +54,7 @@ const Profile = ({ show, setShow }) => {
   return (
     <>
       <div className="bg-white">
+        {call && <Toast callerName={caller} />}
         {/* <Navbar /> */}
         <div
           style={{

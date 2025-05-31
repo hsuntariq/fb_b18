@@ -36,6 +36,12 @@ io.on('connection', (socket) => {
 
 
 
+  socket.on('calling', (data) => {
+    socket.broadcast.emit('received_call', data)
+  })
+
+
+
 })
 
 

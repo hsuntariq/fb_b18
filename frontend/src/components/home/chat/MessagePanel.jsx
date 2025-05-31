@@ -18,6 +18,9 @@ import {
 import { BsChatDots, BsSend } from 'react-icons/bs';
 import io from 'socket.io-client'
 import { useSelector } from 'react-redux';
+import { FaVideo } from 'react-icons/fa6';
+import { Link } from 'react-router-dom';
+import { Toast } from '../../../video_call/ToastVideo';
 
 const socket = io.connect('http://localhost:5174');
 
@@ -71,10 +74,7 @@ export default function MessagePanel({ receiver_id, username, show, setShow }) {
             }
         };
 
-        socket.on('received_message', () => {
-            setShow(true)
 
-        })
 
         socket.on('received_message', handleReceivedMessage);
 
@@ -89,8 +89,20 @@ export default function MessagePanel({ receiver_id, username, show, setShow }) {
         (msg.sender_id === receiver_id && msg.receiver_id === user?._id)
     ).sort((a, b) => a.time - b.time);
 
+
+
+    const sendNotification = () => {
+        socket.emit('calling', { sender_id: user?._id, receiver_id, sender_name: `${user?.f_name} ${user?.l_name}` })
+    }
+
+
+
+
+
+
     return (
         <Box sx={{ backgroundColor: 'transparent' }}>
+
             <button
                 onClick={toggleDrawer(true)}
                 className="bg-gray-200 cursor-pointer rounded-md px-4 py-2 text-black font-semibold whitespace-nowrap flex items-center gap-2"
@@ -130,6 +142,12 @@ export default function MessagePanel({ receiver_id, username, show, setShow }) {
                             {username}
                         </Typography>
                     </Box>
+                    <Link onClick={sendNotification} target='_blank' to={`/video-call/${user?._id}/${receiver_id}`} >
+                        <IconButton sx={{ color: 'purple', p: 0.5 }}>
+                            <FaVideo />
+
+                        </IconButton>
+                    </Link>
                     <IconButton onClick={toggleDrawer(false)} sx={{ color: 'purple', p: 0.5 }}>
                         <svg width="24" height="24" viewBox="0 0 24 24">
                             <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z" />
