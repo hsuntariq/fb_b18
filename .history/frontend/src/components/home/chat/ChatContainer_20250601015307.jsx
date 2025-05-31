@@ -37,7 +37,7 @@ const ChatContainer = () => {
   return (
     <>
       <div className="min-h-screen bg-transparent pointer-events-none z-10 w-full fixed top-0">
-        <div className="w-[70%] shadow fixed h-[400px] hide-scrollbar pointer-events-auto overflow-y-scroll bottom-0 right-[10%] md:w-[40%] lg:w-[30%] xl:w-[32%] rounded-t-[20px] bg-white">
+        <div className="w-[70%] shadow fixed h-[00px] bottom-[-100px] right-[10%] md:w-[40%] lg:w-[30%] xl:w-[30%] rounded-t-[20px] bg-white">
           <div className="bg-white">
             <div className="flex items-center shadow-md p-2 justify-between">
               <div className="flex gap-3">

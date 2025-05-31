@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./globals.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/auth/Login";
@@ -15,26 +15,11 @@ import ClimateCenter from "./pages/home/ClimateCenter";
 import FundraisersPage from "./components/home/SidebarComponents/Fundraisers/FundraisersPage";
 import AllStories from "./pages/Story/AllStories";
 import VideoPage from "./pages/videos/VideoPage";
-import ChatContainer from "./components/home/chat/ChatContainer";
-import io from 'socket.io-client'
-import VideoCallZego from "./video_call/VideoCall";
-const socket = io.connect('http://localhost:5174')
 const App = () => {
-
-  const [show, setShow] = useState(true)
-
-
-
-
-
   return (
     <>
       <Router>
         <Toaster />
-        {show && <ChatContainer />}
-
-
-
         <Routes>
           {/* auth routes */}
           <Route path="/" element={<Login />} />
@@ -46,15 +31,11 @@ const App = () => {
           <Route path="/friends" element={<Friends />} />
           <Route path="/feeds" element={<Feeds />}></Route>
           <Route path="/climatecenter" element={<ClimateCenter />} />
-          <Route path="/profile/:id" element={<Profile setShow={setShow} show={show} />} />
+          <Route path="/profile/:id" element={<Profile />} />
           <Route path="/fundraiser" element={<FundraisersPage />} />
           <Route path="/stories" element={<AllStories />} />
 
           <Route path="/videos" element={<VideoPage />} />
-
-
-          <Route path='/video-call/:sender_id/:receiver_id' element={<VideoCallZego />} />
-
         </Routes>
       </Router>
     </>

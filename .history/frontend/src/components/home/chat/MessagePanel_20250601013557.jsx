@@ -80,6 +80,7 @@ export default function MessagePanel({ receiver_id, username, show, setShow }) {
         });
     };
 
+    // ⏰ Helper to format timestamp to readable time
     const formatTime = (timestamp) => {
         const date = new Date(timestamp);
         return date.toLocaleTimeString([], {
