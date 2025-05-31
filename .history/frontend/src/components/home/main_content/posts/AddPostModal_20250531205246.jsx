@@ -10,7 +10,7 @@ import {
   FaSortDown,
   FaTimes,
   FaUser,
-  FaVideo, // ADDED: Video icon for UI
+  FaVideo,
 } from "react-icons/fa";
 import { Fa42Group } from "react-icons/fa6";
 import { RiGroupFill } from "react-icons/ri";
@@ -24,7 +24,6 @@ import BackgroundThemes from "./BackgroundThemes";
 import { useDispatch, useSelector } from "react-redux";
 import { addPostData, postReset } from "../../../../features/posts/postSlice";
 import { ClockLoader, ScaleLoader } from "react-spinners";
-
 import toast from "react-hot-toast";
 import {
   FaImage,
@@ -66,13 +65,13 @@ export default function BasicModal() {
   const [image, setImage] = useState(null);
   const [imageLoading, setImageLoading] = useState(false);
   const [imageLink, setImageLink] = useState("");
-  
-  // ADDED: Video-related state variables
+
+  const [video, setVideo] = useState(false);
+  const [videoSelected, setVideoSelected] = useState(false);
   const [videoPreview, setVideoPreview] = useState(null);
-  const [video, setVideo] = useState(null);
+  const [videoFile, setVideoFile] = useState(null);
   const [videoLoading, setVideoLoading] = useState(false);
   const [videoLink, setVideoLink] = useState("");
-  const [mediaType, setMediaType] = useState(""); // "image" or "video"
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -84,40 +83,27 @@ export default function BasicModal() {
 
   useEffect(() => {
     caption.length > 0 ? setShow(false) : setShow(true);
-    if (mediaSelected) {
+    if (mediaSelected || videoSelected) {
       setShow(false);
     }
-  }, [caption, mediaSelected]);
+  }, [caption, mediaSelected, videoSelected]);
 
   const { user } = useSelector((state) => state.auth);
   const { posts, postLoading, postError, postSuccess, postMessage } =
     useSelector((state) => state.album);
   const dispatch = useDispatch();
-  
-  // MODIFIED: Updated to handle both image and video upload
+
   const handlePostUpload = async () => {
-    // FIXED: Proper handling of media upload before dispatching
     const postData = {
       caption,
       background: selectedColor,
       user_id: user?._id,
-      postImage: "", // Will be set if image is selected
-      postVideo: "", // Will be set if video is selected
+      postImage: await uploadImage(),
+      postVideo: await uploadVideo(),
     };
 
-    // Upload media first, then update postData
-    if (mediaType === "image" && image) {
-      const uploadedImageUrl = await uploadImage();
-      postData.postImage = uploadedImageUrl;
-    } else if (mediaType === "video" && video) {
-      const uploadedVideoUrl = await uploadVideo();
-      postData.postVideo = uploadedVideoUrl;
-    }
-
-    // Only dispatch if we have content (caption or media)
-    if (caption.trim() || postData.postImage || postData.postVideo) {
-      dispatch(addPostData(postData));
-    }
+    console.log("Post Data being sent:", postData); // Debugging log
+    dispatch(addPostData(postData));
   };
 
   useEffect(() => {
@@ -130,47 +116,25 @@ export default function BasicModal() {
       setCaption("");
       setOpenColor(false);
       setOpen(false);
-      // ADDED: Reset all media-related states after successful post
-      setImagePreview(null);
-      setImage(null);
+      setVideoSelected(false);
       setVideoPreview(null);
-      setVideo(null);
-      setMediaType("");
-      setMedia(false);
-      setMediaSelected(false);
-      setChanged(false);
+      setVideoFile(null);
+      setVideo(false);
     }
 
     dispatch(postReset());
   }, [postError, postSuccess]);
 
-  // MODIFIED: Handle both image and video file selection
   const handleImageChange = (e) => {
     let files = e.target.files[0];
-    
-    // ADDED: Check if file is image or video
-    if (files.type.startsWith('image/')) {
-      let image_url = URL.createObjectURL(files);
-      setImagePreview(image_url);
-      setImage(files);
-      setMediaType("image");
-      setVideoPreview(null); // Clear video preview
-      setVideo(null);
-    } else if (files.type.startsWith('video/')) {
-      let video_url = URL.createObjectURL(files);
-      setVideoPreview(video_url);
-      setVideo(files);
-      setMediaType("video");
-      setImagePreview(null); // Clear image preview
-      setImage(null);
-    }
-    
+    let image_url = URL.createObjectURL(files);
+    setImagePreview(image_url);
+    setImage(files);
     setMediaSelected(true);
   };
 
   const uploadImage = async () => {
-    // username : dwtsjgcyf
-    // password : ls8frk5v
+    if (!image) return "";
     try {
       setImageLoading(true);
       const data = new FormData();
@@ -183,58 +147,67 @@ export default function BasicModal() {
       );
 
       setImageLink(response.data.url);
-      console.log(response.data.url);
-      
-      // FIXED: Don't reset states here, let handlePostUpload manage the flow
-      // setImage(null);
-      // setImagePreview(null);
-      // setMedia(false);
-      // handleClose();
-      // setMediaSelected(false);
-      // toast.success("Posted Successfully!");
-      
-      setImageLoading(false);
+      console.log("Image URL:", response.data.url);
+      setImage(null);
+      setImagePreview(null);
+      setMedia(false);
+      handleClose();
+      setMediaSelected(false);
+      toast.success("Posted Successfully!");
       return response.data.url;
     } catch (error) {
-      console.log(error);
-      setImageLoading(false);
-      return ""; // Return empty string on error
+      console.log("Image Upload Error:", error);
+      toast.error("Failed to upload image: " + error.message);
+    }
+    setImageLoading(false);
+    return "";
+  };
+
+  const handleVideoChange = (e) => {
+    let files = e.target.files[0];
+    if (files) {
+      // Check file size (e.g., limit to 100MB)
+      const maxSize = 100 * 1024 * 1024; // 100MB in bytes
+      if (files.size > maxSize) {
+        toast.error("Video size exceeds 100MB limit!");
+        return;
+      }
+      let video_url = URL.createObjectURL(files);
+      console.log("Video File Selected:", files); // Debugging log
+      setVideoPreview(video_url);
+      setVideoFile(files);
+      setVideoSelected(true);
     }
   };
 
-  // ADDED: New function to upload videos to Cloudinary
   const uploadVideo = async () => {
+    if (!videoFile) return "";
     try {
       setVideoLoading(true);
       const data = new FormData();
-      data.append("file", video);
+      data.append("file", videoFile);
       data.append("upload_preset", "ls8frk5v");
 
       const response = await axios.post(
-        "https://api.cloudinary.com/v1_1/dwtsjgcyf/video/upload", // Note: video/upload endpoint
+        "https://api.cloudinary.com/v1_1/dwtsjgcyf/video/upload",
         data
       );
 
       setVideoLink(response.data.url);
-      console.log("Video uploaded:", response.data.url);
-      
-      // FIXED: Don't reset states here, let handlePostUpload manage the flow
-      // setVideo(null);
-      // setVideoPreview(null);
-      // setMedia(false);
-      // handleClose();
-      // setMediaSelected(false);
-      // setMediaType("");
-      // toast.success("Video Posted Successfully!");
-      
-      setVideoLoading(false);
+      console.log("Video URL:", response.data.url);
+      setVideoFile(null);
+      setVideoPreview(null);
+      setVideo(false);
+      handleClose();
+      setVideoSelected(false);
+      toast.success("Video Uploaded Successfully!");
       return response.data.url;
     } catch (error) {
-      console.log("Video upload error:", error);
-      toast.error("Failed to upload video");
-      setVideoLoading(false);
-      return ""; // Return empty string on error
+      console.log("Video Upload Error:", error);
+      toast.error("Failed to upload video: " + (error.response?.data?.error?.message || error.message));
     }
+    setVideoLoading(false);
+    return "";
   };
 
   return (
@@ -288,7 +261,7 @@ export default function BasicModal() {
                 style={{
                   backgroundPosition: "center center",
                   backgroundRepeat: "no-repeat",
-                  backgroundSize: "cover", // Use cover instead of 100% 100%
+                  backgroundSize: "cover",
                   background:
                     startColor === ""
                       ? `url(${selectedColor?.image})`
@@ -297,7 +270,7 @@ export default function BasicModal() {
                 className={`w-full ${
                   changed
                     ? "h-[350px] bg-image bg-no-repeat bg-cover text-white flex justify-center items-center placeholder-gray-400 font-extrabold"
-                    : media
+                    : media || video
                     ? "h-[30px]"
                     : "h-[200px]"
                 } px-4 pb-4 text-black relative text-[1.5rem] transition-all duration-150 outline-0 my-3 post-caption`}
@@ -306,7 +279,7 @@ export default function BasicModal() {
                   className={`pointer-events-none text-gray-600 absolute ${
                     show ? "block" : "hidden"
                   }
-                    ${media ? "text-[15px]" : ""}
+                    ${media || video ? "text-[15px]" : ""}
                   `}
                 >
                   What's on your mind?{" "}
@@ -316,10 +289,10 @@ export default function BasicModal() {
                   value={caption}
                   onChange={(e) => setCaption(e.target.value)}
                   style={{
-                    resize: "none", // Disable manual resizing
-                    background: "transparent", // Match gradient background
-                    whiteSpace: "pre-wrap", // Allow text wrapping
-                    wordBreak: "break-word", // Break long words
+                    resize: "none",
+                    background: "transparent",
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
                   }}
                   className={`${
                     changed ? "" : ""
@@ -332,53 +305,87 @@ export default function BasicModal() {
                   <input
                     onChange={handleImageChange}
                     type="file"
+                    accept="image/*"
                     className="hidden"
-                    name="media"
+                    name="image"
                     id="media"
-                    accept="image/*,video/*" /* MODIFIED: Accept both images and videos */
                   />
-                  <label for="media">
+                  <label htmlFor="media">
                     <div className="p-2 h-[350px] rounded-xl outline-1 outline-gray-300">
-                      <div className="relative h-full w-full max-w-xl bg-gray-100 rounded-md   border-0 p-1 flex flex-col hover:bg-gray-200 cursor-pointer   items-center justify-center text-center">
-                        {/* Close button */}
+                      <div className="relative h-full w-full max-w-xl bg-gray-100 rounded-md border-0 p-1 flex flex-col hover:bg-gray-200 cursor-pointer items-center justify-center text-center">
                         <button
                           onClick={() => {
                             setMedia(false);
                             setImagePreview(null);
-                            setVideoPreview(null); // ADDED: Clear video preview
                             setMediaSelected(false);
-                            setVideo(null); // ADDED: Clear video
-                            setMediaType(""); // ADDED: Clear media type
                           }}
                           className="absolute top-3 right-3 bg-white border border-gray-300 rounded-full p-2 hover:bg-gray-200"
                         >
                           <FaTimes className="text-gray-600 text-sm" />
                         </button>
                         {mediaSelected ? (
-                          <div className=" overflow-y-scroll hide-scrollbar">
-                            {/* MODIFIED: Display either image or video based on mediaType */}
-                            {mediaType === "image" && imagePreview && (
-                              <img src={imagePreview} width={"100%"} alt="" />
-                            )}
-                            {mediaType === "video" && videoPreview && (
-                              <video 
-                                src={videoPreview} 
-                                width={"100%"} 
-                                controls 
-                                style={{ maxHeight: "300px" }}
-                              />
-                            )}
+                          <div className="overflow-y-scroll hide-scrollbar">
+                            <img src={imagePreview} width={"100%"} alt="" />
                           </div>
                         ) : (
                           <>
-                            {/* Icon */}
                             <div className="bg-gray-200 p-4 rounded-full mb-4">
                               <FaImages className="text-gray-700 text-2xl" />
                             </div>
-
-                            {/* MODIFIED: Updated text to include videos */}
                             <p className="font-medium text-black text-lg">
-                              Add photos/videos
+                              Add photos
+                            </p>
+                            <p className="text-gray-500 text-sm">
+                              or drag and drop
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              )}
+
+              {video && (
+                <div className="p-4">
+                  <input
+                    onChange={handleVideoChange}
+                    type="file"
+                    accept="video/*"
+                    className="hidden"
+                    name="video"
+                    id="video"
+                  />
+                  <label htmlFor="video">
+                    <div className="p-2 h-[350px] rounded-xl outline-1 outline-gray-300">
+                      <div className="relative h-full w-full max-w-xl bg-gray-100 rounded-md border-0 p-1 flex flex-col hover:bg-gray-200 cursor-pointer items-center justify-center text-center">
+                        <button
+                          onClick={() => {
+                            setVideo(false);
+                            setVideoPreview(null);
+                            setVideoSelected(false);
+                          }}
+                          className="absolute top-3 right-3 bg-white border border-gray-300 rounded-full p-2 hover:bg-gray-200"
+                        >
+                          <FaTimes className="text-gray-600 text-sm" />
+                        </button>
+                        {videoSelected ? (
+                          <div className="overflow-y-scroll hide-scrollbar">
+                            <video
+                              src={videoPreview}
+                              width={"100%"}
+                              controls
+                              autoPlay
+                              muted
+                            />
+                          </div>
+                        ) : (
+                          <>
+                            <div className="bg-gray-200 p-4 rounded-full mb-4">
+                              <FaVideo className="text-gray-700 text-2xl" />
+                            </div>
+                            <p className="font-medium text-black text-lg">
+                              Add videos
                             </p>
                             <p className="text-gray-500 text-sm">
                               or drag and drop
@@ -392,14 +399,24 @@ export default function BasicModal() {
               )}
 
               <div className="px-5">
-                <div className="flex items-center  justify-between border border-gray-300 rounded-lg px-4 py-4 bg-white w-full max-w-xl">
+                <div className="flex items-center justify-between border border-gray-300 rounded-lg px-4 py-4 bg-white w-full max-w-xl">
                   <span className="text-black font-medium">
                     Add to your post
                   </span>
                   <div className="flex items-center space-x-4">
                     <FaImage
-                      onClick={() => setMedia(true)}
+                      onClick={() => {
+                        setMedia(true);
+                        setVideo(false);
+                      }}
                       className="text-green-500 text-xl cursor-pointer"
+                    />
+                    <FaVideo
+                      onClick={() => {
+                        setVideo(true);
+                        setMedia(false);
+                      }}
+                      className="text-purple-500 text-xl cursor-pointer"
                     />
                     <FaUserTag className="text-blue-500 text-xl cursor-pointer" />
                     <FaSmile className="text-yellow-500 text-xl cursor-pointer" />
@@ -497,8 +514,6 @@ export default function BasicModal() {
               </div>
             </div>
 
-            {/* my_background */}
-
             <BackgroundThemes
               showBG={showBG}
               setShowBG={setShowBG}
@@ -507,15 +522,17 @@ export default function BasicModal() {
             <div className="p-4">
               <Button
                 onClick={handlePostUpload}
-                disabled={show || postLoading || imageLoading || videoLoading} // ADDED: Disable when video is loading
+                disabled={show || postLoading || imageLoading || videoLoading}
                 variant="contained"
                 style={{
                   background:
-                    show || imageLoading || postLoading || videoLoading ? "#99a1af" : "", // ADDED: Gray out when video loading
+                    show || imageLoading || postLoading || videoLoading
+                      ? "#99a1af"
+                      : "",
                 }}
-                className="w-full  my-2"
+                className="w-full my-2"
               >
-                {postLoading || imageLoading || videoLoading ? ( // ADDED: Show loader for video too
+                {postLoading || imageLoading || videoLoading ? (
                   <ClockLoader size={25} color={"white"} />
                 ) : (
                   "Add Post"

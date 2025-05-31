@@ -24,7 +24,7 @@ const GetPosts = ({
   _id,
   createdAt,
   postImage,
-  postVideo, 
+  postVideo, // ADDED: Video prop
   comments,
   user_id
 }) => {
@@ -49,7 +49,7 @@ const GetPosts = ({
     return whiteVariants.includes(color?.toLowerCase());
   };
 
-  
+  // UPDATED: Include postVideo in caption positioning logic
   const showCaptionAbove = postImage || postVideo || (isWhite(background.startColor) && !background.image);
   const showCaptionCentered = !postImage && !postVideo && (background.image || !isWhite(background.startColor));
 
@@ -88,23 +88,23 @@ const GetPosts = ({
         </div>
       </div>
 
-      
+      {/* UPDATED: Show caption above if there's an image OR video */}
       {showCaptionAbove && (
         <p className="text-gray-900 p-3 my-2 capitalize">{caption}</p>
       )}
 
-      
+      {/* UPDATED: Handle video display with priority over image */}
       {(postVideo || background.image || postImage || !isWhite(background.startColor)) && (
         <div className="relative">
           {postVideo ? (
-            
+            // ADDED: Video display section
             <div className="w-full">
               <video 
                 src={postVideo} 
                 controls 
                 className="w-full h-auto max-h-[500px] object-contain"
                 style={{
-                  backgroundColor: "#000", 
+                  backgroundColor: "#000", // Black background for videos
                 }}
                 preload="metadata"
               >
@@ -112,7 +112,7 @@ const GetPosts = ({
               </video>
             </div>
           ) : (
-        
+            // Original image/background section
             <div
               className="h-[400px] relative"
               style={{
@@ -193,7 +193,7 @@ const GetPosts = ({
             comments={comments}
             caption={caption}
             postImage={postImage}
-            postVideo={postVideo}
+            postVideo={postVideo} // ADDED: Pass video to CommentModal
             background={background}
             post_id={_id}
             user_info={user_id}

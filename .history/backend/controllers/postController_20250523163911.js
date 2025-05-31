@@ -1,7 +1,7 @@
 import { Posts } from "../models/postModel.js";
 
 export const addPost = async (req, res) => {
-  const { caption, background, postImage, postVideo } = req.body;
+  const { caption, background, postImage } = req.body;
   const { user_id } = req.params;
 
   // if (!caption) {
@@ -14,7 +14,6 @@ export const addPost = async (req, res) => {
     background,
     user_id,
     postImage,
-    postVideo
   });
 
   res.send(newPost);

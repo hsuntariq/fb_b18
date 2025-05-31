@@ -10,7 +10,6 @@ import {
   FaSortDown,
   FaTimes,
   FaUser,
-  FaVideo, // ADDED: Video icon for UI
 } from "react-icons/fa";
 import { Fa42Group } from "react-icons/fa6";
 import { RiGroupFill } from "react-icons/ri";
@@ -66,14 +65,6 @@ export default function BasicModal() {
   const [image, setImage] = useState(null);
   const [imageLoading, setImageLoading] = useState(false);
   const [imageLink, setImageLink] = useState("");
-  
-  // ADDED: Video-related state variables
-  const [videoPreview, setVideoPreview] = useState(null);
-  const [video, setVideo] = useState(null);
-  const [videoLoading, setVideoLoading] = useState(false);
-  const [videoLink, setVideoLink] = useState("");
-  const [mediaType, setMediaType] = useState(""); // "image" or "video"
-
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
@@ -93,31 +84,15 @@ export default function BasicModal() {
   const { posts, postLoading, postError, postSuccess, postMessage } =
     useSelector((state) => state.album);
   const dispatch = useDispatch();
-  
-  // MODIFIED: Updated to handle both image and video upload
   const handlePostUpload = async () => {
-    // FIXED: Proper handling of media upload before dispatching
     const postData = {
       caption,
       background: selectedColor,
       user_id: user?._id,
-      postImage: "", // Will be set if image is selected
-      postVideo: "", // Will be set if video is selected
+      postImage: await uploadImage(),
     };
 
-    // Upload media first, then update postData
-    if (mediaType === "image" && image) {
-      const uploadedImageUrl = await uploadImage();
-      postData.postImage = uploadedImageUrl;
-    } else if (mediaType === "video" && video) {
-      const uploadedVideoUrl = await uploadVideo();
-      postData.postVideo = uploadedVideoUrl;
-    }
-
-    // Only dispatch if we have content (caption or media)
-    if (caption.trim() || postData.postImage || postData.postVideo) {
-      dispatch(addPostData(postData));
-    }
+    dispatch(addPostData(postData));
   };
 
   useEffect(() => {
@@ -130,41 +105,16 @@ export default function BasicModal() {
       setCaption("");
       setOpenColor(false);
       setOpen(false);
-      // ADDED: Reset all media-related states after successful post
-      setImagePreview(null);
-      setImage(null);
-      setVideoPreview(null);
-      setVideo(null);
-      setMediaType("");
-      setMedia(false);
-      setMediaSelected(false);
-      setChanged(false);
     }
 
     dispatch(postReset());
   }, [postError, postSuccess]);
 
-  // MODIFIED: Handle both image and video file selection
   const handleImageChange = (e) => {
     let files = e.target.files[0];
-    
-    // ADDED: Check if file is image or video
-    if (files.type.startsWith('image/')) {
-      let image_url = URL.createObjectURL(files);
-      setImagePreview(image_url);
-      setImage(files);
-      setMediaType("image");
-      setVideoPreview(null); // Clear video preview
-      setVideo(null);
-    } else if (files.type.startsWith('video/')) {
-      let video_url = URL.createObjectURL(files);
-      setVideoPreview(video_url);
-      setVideo(files);
-      setMediaType("video");
-      setImagePreview(null); // Clear image preview
-      setImage(null);
-    }
-    
+    let image_url = URL.createObjectURL(files);
+    setImagePreview(image_url);
+    setImage(files);
     setMediaSelected(true);
   };
 
@@ -184,57 +134,17 @@ export default function BasicModal() {
 
       setImageLink(response.data.url);
       console.log(response.data.url);
-      
-      // FIXED: Don't reset states here, let handlePostUpload manage the flow
-      // setImage(null);
-      // setImagePreview(null);
-      // setMedia(false);
-      // handleClose();
-      // setMediaSelected(false);
-      // toast.success("Posted Successfully!");
-      
-      setImageLoading(false);
+      setImage(null);
+      setImagePreview(null);
+      setMedia(false);
+      handleClose();
+      setMediaSelected(false);
+      toast.success("Posted Successfully!");
       return response.data.url;
     } catch (error) {
       console.log(error);
-      setImageLoading(false);
-      return ""; // Return empty string on error
     }
-  };
-
-  // ADDED: New function to upload videos to Cloudinary
-  const uploadVideo = async () => {
-    try {
-      setVideoLoading(true);
-      const data = new FormData();
-      data.append("file", video);
-      data.append("upload_preset", "ls8frk5v");
-
-      const response = await axios.post(
-        "https://api.cloudinary.com/v1_1/dwtsjgcyf/video/upload", // Note: video/upload endpoint
-        data
-      );
-
-      setVideoLink(response.data.url);
-      console.log("Video uploaded:", response.data.url);
-      
-      // FIXED: Don't reset states here, let handlePostUpload manage the flow
-      // setVideo(null);
-      // setVideoPreview(null);
-      // setMedia(false);
-      // handleClose();
-      // setMediaSelected(false);
-      // setMediaType("");
-      // toast.success("Video Posted Successfully!");
-      
-      setVideoLoading(false);
-      return response.data.url;
-    } catch (error) {
-      console.log("Video upload error:", error);
-      toast.error("Failed to upload video");
-      setVideoLoading(false);
-      return ""; // Return empty string on error
-    }
+    setImageLoading(false);
   };
 
   return (
@@ -333,9 +243,8 @@ export default function BasicModal() {
                     onChange={handleImageChange}
                     type="file"
                     className="hidden"
-                    name="media"
+                    name="image"
                     id="media"
-                    accept="image/*,video/*" /* MODIFIED: Accept both images and videos */
                   />
                   <label for="media">
                     <div className="p-2 h-[350px] rounded-xl outline-1 outline-gray-300">
@@ -345,10 +254,7 @@ export default function BasicModal() {
                           onClick={() => {
                             setMedia(false);
                             setImagePreview(null);
-                            setVideoPreview(null); // ADDED: Clear video preview
                             setMediaSelected(false);
-                            setVideo(null); // ADDED: Clear video
-                            setMediaType(""); // ADDED: Clear media type
                           }}
                           className="absolute top-3 right-3 bg-white border border-gray-300 rounded-full p-2 hover:bg-gray-200"
                         >
@@ -356,18 +262,7 @@ export default function BasicModal() {
                         </button>
                         {mediaSelected ? (
                           <div className=" overflow-y-scroll hide-scrollbar">
-                            {/* MODIFIED: Display either image or video based on mediaType */}
-                            {mediaType === "image" && imagePreview && (
-                              <img src={imagePreview} width={"100%"} alt="" />
-                            )}
-                            {mediaType === "video" && videoPreview && (
-                              <video 
-                                src={videoPreview} 
-                                width={"100%"} 
-                                controls 
-                                style={{ maxHeight: "300px" }}
-                              />
-                            )}
+                            <img src={imagePreview} width={"100%"} alt="" />
                           </div>
                         ) : (
                           <>
@@ -376,7 +271,7 @@ export default function BasicModal() {
                               <FaImages className="text-gray-700 text-2xl" />
                             </div>
 
-                            {/* MODIFIED: Updated text to include videos */}
+                            {/* Text */}
                             <p className="font-medium text-black text-lg">
                               Add photos/videos
                             </p>
@@ -507,15 +402,15 @@ export default function BasicModal() {
             <div className="p-4">
               <Button
                 onClick={handlePostUpload}
-                disabled={show || postLoading || imageLoading || videoLoading} // ADDED: Disable when video is loading
+                disabled={show || postLoading || imageLoading}
                 variant="contained"
                 style={{
                   background:
-                    show || imageLoading || postLoading || videoLoading ? "#99a1af" : "", // ADDED: Gray out when video loading
+                    show || imageLoading || postLoading ? "#99a1af" : "",
                 }}
                 className="w-full  my-2"
               >
-                {postLoading || imageLoading || videoLoading ? ( // ADDED: Show loader for video too
+                {postLoading || imageLoading ? (
                   <ClockLoader size={25} color={"white"} />
                 ) : (
                   "Add Post"

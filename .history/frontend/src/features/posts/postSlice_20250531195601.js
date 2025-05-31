@@ -22,7 +22,7 @@ export const addPostData = createAsyncThunk(
     try {
       return await addPost(postData);
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.error); // FIXED: typo 'respose' to 'response'
+      return thunkAPI.rejectWithValue(error.respose.data.error);
     }
   }
 );
@@ -38,6 +38,7 @@ export const getPostData = createAsyncThunk(
   }
 );
 
+
 export const addReactionData = createAsyncThunk('add-reaction', async (reactionData, thunkAPI) => {
   try {
     return await makeReaction(reactionData)
@@ -45,6 +46,8 @@ export const addReactionData = createAsyncThunk('add-reaction', async (reactionD
     return thunkAPI.rejectWithValue(error.response.data.error)
   }
 })
+
+
 
 export const getReactionsData = createAsyncThunk('get-reactions', async (post_id, thunkAPI) => {
   try {
@@ -54,6 +57,8 @@ export const getReactionsData = createAsyncThunk('get-reactions', async (post_id
   }
 })
 
+
+
 export const addCommentData = createAsyncThunk('add-comment', async (postData, thunkAPI) => {
   try {
     const token = thunkAPI.getState().auth.user.token
@@ -62,6 +67,11 @@ export const addCommentData = createAsyncThunk('add-comment', async (postData, t
     return thunkAPI.rejectWithValue(error.response.data.error)
   }
 })
+
+
+
+
+
 
 export const postSlice = createSlice({
   name: "posts",
@@ -92,7 +102,7 @@ export const postSlice = createSlice({
       .addCase(addPostData.fulfilled, (state, action) => {
         state.postLoading = false;
         state.postSuccess = true;
-        state.posts.unshift(action.payload); // COMMENT: This will now include video data from backend
+        state.posts.unshift(action.payload);
       })
       .addCase(getPostData.pending, (state, action) => {
         state.postLoading = true;
@@ -150,6 +160,7 @@ export const postSlice = createSlice({
         state.commentLoading = false;
         state.commentSuccess = true;
 
+
         state.posts = state.posts.map((item, index) => {
           if (item._id == action.payload.comments[0].post_id) {
             return {
@@ -159,6 +170,7 @@ export const postSlice = createSlice({
           }
           return item
         })
+
       })
   },
 });
