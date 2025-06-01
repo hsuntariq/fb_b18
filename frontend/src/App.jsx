@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Home from "./pages/home/Home";
-import 'react-loading-skeleton/dist/skeleton.css'
+import "react-loading-skeleton/dist/skeleton.css";
 import { Toaster } from "react-hot-toast";
 import OtpVerificationPage from "./pages/auth/OTP";
 import Friends from "./components/home/friends/Friends";
@@ -16,24 +16,18 @@ import FundraisersPage from "./components/home/SidebarComponents/Fundraisers/Fun
 import AllStories from "./pages/Story/AllStories";
 import VideoPage from "./pages/videos/VideoPage";
 import ChatContainer from "./components/home/chat/ChatContainer";
-import io from 'socket.io-client'
+import io from "socket.io-client";
 import VideoCallZego from "./video_call/VideoCall";
-const socket = io.connect('http://localhost:5174')
+import Market from "./marketPlace/Market";
+const socket = io.connect("http://localhost:5174");
 const App = () => {
-
-  const [show, setShow] = useState(false)
-
-
-
-
+  const [show, setShow] = useState(false);
 
   return (
     <>
       <Router>
         <Toaster />
         {show && <ChatContainer />}
-
-
 
         <Routes>
           {/* auth routes */}
@@ -46,15 +40,20 @@ const App = () => {
           <Route path="/friends" element={<Friends />} />
           <Route path="/feeds" element={<Feeds />}></Route>
           <Route path="/climatecenter" element={<ClimateCenter />} />
-          <Route path="/profile/:id" element={<Profile setShow={setShow} show={show} />} />
+          <Route
+            path="/profile/:id"
+            element={<Profile setShow={setShow} show={show} />}
+          />
           <Route path="/fundraiser" element={<FundraisersPage />} />
           <Route path="/stories" element={<AllStories />} />
+          <Route path="/marketplace" element={<Market />} />
 
           <Route path="/videos" element={<VideoPage />} />
 
-
-          <Route path='/video-call/:sender_id/:receiver_id' element={<VideoCallZego />} />
-
+          <Route
+            path="/video-call/:sender_id/:receiver_id"
+            element={<VideoCallZego />}
+          />
         </Routes>
       </Router>
     </>
