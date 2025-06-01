@@ -25,11 +25,6 @@ const postSchema = mongoose.Schema(
       default: "",
       required: false,
     },
-    postVideo: {
-      type: String,
-      default: "",
-      required: false,
-    },
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -43,7 +38,7 @@ const postSchema = mongoose.Schema(
     comments: {
       type: Array,
       default: [],
-      required: false,
+      required: false
     }
   },
   {

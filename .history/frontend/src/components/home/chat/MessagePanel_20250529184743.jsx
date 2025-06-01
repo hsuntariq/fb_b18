@@ -6,7 +6,8 @@ import {
     Typography,
     Divider,
     TextField,
-    IconButton
+    IconButton,
+    Button
 } from '@mui/material';
 import {
     FaSmile,
@@ -16,78 +17,48 @@ import {
     FaGift
 } from 'react-icons/fa';
 import { BsChatDots, BsSend } from 'react-icons/bs';
-import io from 'socket.io-client'
-import { useSelector } from 'react-redux';
-import { FaVideo } from 'react-icons/fa6';
-import { Link } from 'react-router-dom';
+import { format } from 'date-fns'; // Import date-fns for formatting timestamps
+import io from 'socket.io-client';
 
 const socket = io.connect('http://localhost:5174');
 
-export default function MessagePanel({ receiver_id, username, show, setShow }) {
+export default function MessagePanel({ receiver_id, username }) {
     const [open, setOpen] = useState(false);
     const [message, setMessage] = useState('');
-    const [messages, setMessages] = useState([]);
-
-    const { user } = useSelector((state) => state.auth);
-
+    const [sentMessages, setSentMessages] = useState([]);
+    const [receivedMessages, setReceivedMessage] = useState([]);
     const toggleDrawer = (newOpen) => () => setOpen(newOpen);
 
     const handleMessage = () => {
-        if (!message.trim()) return;
+        if (!message.trim()) return; // Avoid empty messages
 
         const newMsg = {
             sent: true,
             time: Date.now(),
-            message,
-            sender_id: user?._id,
-            receiver_id
+            message
         };
 
         socket.emit('sent_message', newMsg);
-        setMessages(prev => [...prev, newMsg]);
-        setMessage('');
+
+        setSentMessages(prev => [...prev, newMsg]);
+        setMessage(''); // Clear input after sending
     };
 
     useEffect(() => {
-        const handleReceivedMessage = (data) => {
-            if (
-                (data.receiver_id === user?._id && data.sender_id === receiver_id) ||
-                (data.sender_id === user?._id && data.receiver_id === receiver_id)
-            ) {
-                setMessages(prev => [...prev, {
-                    ...data,
-                    sent: data.sender_id === user?._id
-                }]);
-            }
-        };
-
-        socket.on('received_message', handleReceivedMessage);
-        return () => {
-            socket.off('received_message', handleReceivedMessage);
-        };
-    }, [user?._id, receiver_id]);
-
-    const filteredMessages = messages.filter(msg =>
-        (msg.sender_id === user?._id && msg.receiver_id === receiver_id) ||
-        (msg.sender_id === receiver_id && msg.receiver_id === user?._id)
-    ).sort((a, b) => a.time - b.time);
-
-    const sendNotification = () => {
-        socket.emit('calling', {
-            sender_id: user?._id,
-            receiver_id,
-            sender_name: `${user?.f_name} ${user?.l_name}`
+        socket.on('received_message', (data) => {
+            setReceivedMessage((prevValue) => [...prevValue, {
+                sent: false,
+                time: Date.now(),
+                message: data.message
+            }]);
         });
-    };
 
-    const formatTime = (timestamp) => {
-        const date = new Date(timestamp);
-        return date.toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true
-        });
-    };
+        return () => socket.off('received_message'); // Clean up listener
+    }, []);
+
+    let allMessages = [...sentMessages, ...receivedMessages].sort((a, b) => {
+        return a.time - b.time;
+    });
 
     return (
         <Box sx={{ backgroundColor: 'transparent' }}>
@@ -95,9 +66,10 @@ export default function MessagePanel({ receiver_id, username, show, setShow }) {
                 onClick={toggleDrawer(true)}
                 className="bg-gray-200 cursor-pointer rounded-md px-4 py-2 text-black font-semibold whitespace-nowrap flex items-center gap-2"
             >
-                <BsChatDots /> Message
+                <BsChatDots />
+                {" "}
+                Message
             </button>
-
             <Drawer
                 anchor="right"
                 open={open}
@@ -106,9 +78,10 @@ export default function MessagePanel({ receiver_id, username, show, setShow }) {
                     sx: {
                         width: '340px',
                         height: '500px',
-                        borderRadius: '20px 0 0 20px',
+                        borderRadius: '8px 0 0 8px',
                         bottom: '0px',
                         right: '10%',
+                        borderRadius: '20px',
                         top: 'auto',
                         boxShadow: '0 -2px 10px rgba(0, 0, 0, 0.1)',
                         backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -128,11 +101,6 @@ export default function MessagePanel({ receiver_id, username, show, setShow }) {
                             {username}
                         </Typography>
                     </Box>
-                    <Link onClick={sendNotification} target='_blank' to={`/video-call/${user?._id}/${receiver_id}`} >
-                        <IconButton sx={{ color: 'purple', p: 0.5 }}>
-                            <FaVideo />
-                        </IconButton>
-                    </Link>
                     <IconButton onClick={toggleDrawer(false)} sx={{ color: 'purple', p: 0.5 }}>
                         <svg width="24" height="24" viewBox="0 0 24 24">
                             <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z" />
@@ -140,55 +108,55 @@ export default function MessagePanel({ receiver_id, username, show, setShow }) {
                     </IconButton>
                 </Box>
 
+                {/* Encrypted Info */}
+                <Box sx={{ textAlign: 'center', px: 2, py: 0.5, bgcolor: 'rgba(228, 230, 235, 0.9)' }}>
+                </Box>
+
                 <Divider />
 
                 {/* Message Area */}
-                <Box sx={{
-                    flexGrow: 1,
-                    p: 2,
-                    overflowY: 'auto',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 1,
-                    bgcolor: 'transparent'
-                }}>
-                    {filteredMessages.map((msg, index) => (
-                        <Box
-                            key={index}
-                            sx={{
-                                alignSelf: msg.sent ? 'flex-end' : 'flex-start',
-                                maxWidth: '80%',
-                                p: 1.5,
-                                borderRadius: msg.sent ? '18px 18px 0 18px' : '18px 18px 18px 0',
-                                bgcolor: msg.sent ? '#1b74e4' : '#e4e6eb',
-                                color: msg.sent ? 'white' : 'black',
-                            }}
-                        >
-                            <Typography variant="body2">{msg.message}</Typography>
-                            <Typography
-                                variant="caption"
+                <Box sx={{ flexGrow: 1, p: 2, bgcolor: 'transparent', overflowY: 'auto' }}>
+                    {allMessages?.map((item, index) => {
+                        const formattedTime = format(new Date(item.time), 'hh:mm a'); // Format timestamp to "12:00 PM"
+                        return (
+                            <Box
+                                key={index}
                                 sx={{
-                                    display: 'block',
-                                    textAlign: msg.sent ? 'right' : 'left',
-                                    fontSize: '10px',
-                                    opacity: 0.7,
-                                    mt: 0.5
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: item.sent ? 'flex-end' : 'flex-start',
+                                    mb: 1,
                                 }}
                             >
-                                {formatTime(msg.time)}
-                            </Typography>
-                        </Box>
-                    ))}
+                                <Box
+                                    sx={{
+                                        maxWidth: '70%',
+                                        bgcolor: item.sent ? '#DCF8C6' : '#E4E6EB',
+                                        color: item.sent ? '#000' : '#000',
+                                        borderRadius: '16px',
+                                        px: 2,
+                                        py: 1,
+                                    }}
+                                >
+                                    <Typography variant="body2">{item.message}</Typography>
+                                </Box>
+                                <Typography
+                                    variant="caption"
+                                    sx={{
+                                        color: '#65676B',
+                                        fontSize: '0.7rem',
+                                        mt: 0.5,
+                                    }}
+                                >
+                                    {formattedTime}
+                                </Typography>
+                            </Box>
+                        );
+                    })}
                 </Box>
 
                 {/* Input Area */}
-                <Box sx={{
-                    p: 1,
-                    bgcolor: 'rgba(240, 242, 245, 0.9)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1
-                }}>
+                <Box sx={{ p: 1, bgcolor: 'rgba(240, 242, 245, 0.9)', display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Box
                         sx={{
                             display: 'flex',
@@ -213,7 +181,6 @@ export default function MessagePanel({ receiver_id, username, show, setShow }) {
                         placeholder="Aa"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && handleMessage()}
                         sx={{
                             bgcolor: '#fff',
                             borderRadius: '20px',
@@ -228,13 +195,7 @@ export default function MessagePanel({ receiver_id, username, show, setShow }) {
                             },
                         }}
                     />
-                    <IconButton
-                        onClick={handleMessage}
-                        disabled={!message.trim()}
-                        sx={{ color: '#1b74e4' }}
-                    >
-                        <BsSend />
-                    </IconButton>
+                    <BsSend className='cursor-pointer' onClick={handleMessage} />
                 </Box>
             </Drawer>
         </Box>
